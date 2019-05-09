@@ -3,7 +3,6 @@ package com.jis.uv.model;
 import com.jis.uv.model.enums.Gender;
 import com.jis.uv.model.enums.MemberTypeEnum;
 
-import java.sql.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,11 +10,10 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
+import java.sql.Date;
 
 @Entity
 public class Member {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", unique = true)
@@ -38,8 +36,8 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(name = "adress")
-    private String adress;
+    @Column(name = "address")
+    private String address;
 
     @Column(name = "zip")
     private String zip;
@@ -50,13 +48,13 @@ public class Member {
     @Column(name = "state")
     private String state;
 
-    @Column(name = "phone_number")
+    @Column(name = "phone_number", unique = true)
     private String phoneNumber;
 
-    @Column(name = "cell_number")
+    @Column(name = "cell_number", unique = true)
     private String cellNumber;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
 
     @Column(name = "birth_date")
@@ -68,12 +66,24 @@ public class Member {
     @Column(name = "oib", unique = true)
     private String oib;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public Member(String firstName, String lastName, String cardNumber, MemberTypeEnum memeberType, Gender gender,
+                  String adress, String zip, String city, String state, String phoneNumber, String cellNumber, String email,
+                  Date birthDate, String passportNumber, String oib) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.cardNumber = cardNumber;
+        this.memeberType = memeberType;
+        this.gender = gender;
+        this.adress = adress;
+        this.zip = zip;
+        this.city = city;
+        this.state = state;
+        this.phoneNumber = phoneNumber;
+        this.cellNumber = cellNumber;
+        this.email = email;
+        this.birthDate = birthDate;
+        this.passportNumber = passportNumber;
+        this.oib = oib;
     }
 
     public String getFirstName() {
