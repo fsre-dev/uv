@@ -3,6 +3,7 @@ package com.jis.uv.model;
 import com.jis.uv.model.enums.Gender;
 import com.jis.uv.model.enums.MemberTypeEnum;
 
+import java.sql.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,7 +11,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.sql.Date;
 
 @Entity
 public class Member {
@@ -30,7 +30,7 @@ public class Member {
 
     @Column(name = "member_type")
     @Enumerated(EnumType.STRING)
-    private MemberTypeEnum memeberType;
+    private MemberTypeEnum memberType;
 
     @Column(name = "gender")
     @Enumerated(EnumType.STRING)
@@ -66,15 +66,15 @@ public class Member {
     @Column(name = "oib", unique = true)
     private String oib;
 
-    public Member(String firstName, String lastName, String cardNumber, MemberTypeEnum memeberType, Gender gender,
-                  String adress, String zip, String city, String state, String phoneNumber, String cellNumber, String email,
+    public Member(String firstName, String lastName, String cardNumber, MemberTypeEnum memberType, Gender gender,
+                  String address, String zip, String city, String state, String phoneNumber, String cellNumber, String email,
                   Date birthDate, String passportNumber, String oib) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.cardNumber = cardNumber;
-        this.memeberType = memeberType;
+        this.memberType = memberType;
         this.gender = gender;
-        this.adress = adress;
+        this.address = address;
         this.zip = zip;
         this.city = city;
         this.state = state;
@@ -110,12 +110,12 @@ public class Member {
         this.cardNumber = cardNumber;
     }
 
-    public MemberTypeEnum getMemeberType() {
-        return memeberType;
+    public MemberTypeEnum getMemberType() {
+        return memberType;
     }
 
-    public void setMemeberType(MemberTypeEnum memeberType) {
-        this.memeberType = memeberType;
+    public void setMemberType(MemberTypeEnum memberType) {
+        this.memberType = memberType;
     }
 
     public Gender getGender() {
@@ -127,11 +127,11 @@ public class Member {
     }
 
     public String getAdress() {
-        return adress;
+        return address;
     }
 
     public void setAdress(String adress) {
-        this.adress = adress;
+        this.address = adress;
     }
 
     public String getZip() {
