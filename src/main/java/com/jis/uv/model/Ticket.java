@@ -39,6 +39,9 @@ public class Ticket {
     @Column(name = "price")
     private Double price;
 
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
+
     @ManyToOne
     @JoinColumn(name = "member")
     private Member member;
@@ -113,6 +116,14 @@ public class Ticket {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public Boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
     public Member getMember() {
