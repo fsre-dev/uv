@@ -31,6 +31,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private RoleEnum role;
 
+    @Column(name = "isdeleted")
+    private Boolean isDeleted;
+
     public Long getId() {
         return id;
     }
@@ -69,5 +72,13 @@ public class User {
 
     public void setRole(RoleEnum role) {
         this.role = role;
+    }
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
     }
 }

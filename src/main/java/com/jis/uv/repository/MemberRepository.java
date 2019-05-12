@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface MemberRepo extends JpaRepository<Member, Long> {
+public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Page<Member> findAllByLastName(String lastName, Pageable pageRequest);
 
@@ -31,13 +31,11 @@ public interface MemberRepo extends JpaRepository<Member, Long> {
 
     Page<Member> findAllByPhoneNumber(String phoneNumber, Pageable pageRequest);
 
-    List<Member> findAllByPassportNumber(String passportNumber);
+    Member findByPassportNumber(String passportNumber);
 
-    List<Member> findAllByOib(String oib);
+    Member findByOib(String oib);
 
-    List<Member> findAllByCardNumber(String cardNumber);
-
-    List<Member> findAllByEmail(String eMail);
+    Member findByEmail(String eMail);
 
     Member findByCardNumber(String cardNumber);
 }

@@ -66,6 +66,9 @@ public class Member {
     @Column(name = "oib", unique = true)
     private String oib;
 
+    @Column(name = "isdeleted")
+    private Boolean isDeleted;
+
     public Member(String firstName, String lastName, String cardNumber, MemberTypeEnum memberType, Gender gender,
                   String address, String zip, String city, String state, String phoneNumber, String cellNumber, String email,
                   Date birthDate, String passportNumber, String oib) {
@@ -84,6 +87,14 @@ public class Member {
         this.birthDate = birthDate;
         this.passportNumber = passportNumber;
         this.oib = oib;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -126,12 +137,12 @@ public class Member {
         this.gender = gender;
     }
 
-    public String getAdress() {
+    public String getAddress() {
         return address;
     }
 
-    public void setAdress(String adress) {
-        this.address = adress;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getZip() {
@@ -204,5 +215,13 @@ public class Member {
 
     public void setOib(String oib) {
         this.oib = oib;
+    }
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
     }
 }
