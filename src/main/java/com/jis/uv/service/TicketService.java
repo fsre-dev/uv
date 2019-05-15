@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class TicketService {
-    TicketRepository ticketRepository;
+    private TicketRepository ticketRepository;
 
     public void insert(Ticket ticket) {
         ticketRepository.save(ticket);
