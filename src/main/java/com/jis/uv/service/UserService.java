@@ -16,45 +16,45 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    private List<User> findAll() {
+    public List<User> findAll() {
         return userRepository.findAll();
     }
 
-    private Page<User> findAll(Pageable pageRequest) {
+    public Page<User> findAll(Pageable pageRequest) {
         return userRepository.findAll(pageRequest);
     }
 
-    private Page<User> findAllByUsername(String username, Pageable pageRequest) {
-        return userRepository.findAllByUsername(username, pageRequest);
-    }
-
-    private Page<User> findAllByEMail(String eMail, Pageable pageRequest) {
-        return userRepository.findAllByEMail(eMail, pageRequest);
-    }
-
-    private Page<User> findAllByRole(RoleEnum role, Pageable pageRequest) {
+    public Page<User> findAllByRole(RoleEnum role, Pageable pageRequest) {
         return userRepository.findAllByRole(role, pageRequest);
     }
 
-    private User findById(Long id) {
+    public User findById(Long id) {
         return userRepository.findById(id).orElse(null);
     }
 
-    private User createUser(User user){
+    public User findByEMail(String eMail) {
+        return userRepository.findByEMail(eMail);
+    }
+
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    public User createUser(User user) {
         return userRepository.save(user);
     }
 
-    private User updateUser(User user, Long id){
+    public User updateUser(User user, Long id) {
         user.setId(id);
         return userRepository.save(user);
     }
 
-    private User deleteUser(User user){
+    public User deleteUser(User user) {
         user.setDeleted(true);
         return userRepository.save(user);
     }
 
-    private void deletePermanentlyUser(Long id){
+    public void deletePermanentlyUser(Long id) {
         userRepository.deleteById(id);
     }
 }

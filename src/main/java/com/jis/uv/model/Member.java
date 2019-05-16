@@ -69,6 +69,9 @@ public class Member {
     @Column(name = "isdeleted")
     private Boolean isDeleted;
 
+    public Member() {
+    }
+
     public Member(String firstName, String lastName, String cardNumber, MemberTypeEnum memberType, Gender gender,
                   String address, String zip, String city, String state, String phoneNumber, String cellNumber, String email,
                   Date birthDate, String passportNumber, String oib) {
