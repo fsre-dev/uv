@@ -1,6 +1,7 @@
 package com.jis.uv.model;
 
-import java.sql.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.sql.Date;
 
 @Entity
 @Table(name = "membership")
@@ -19,9 +21,11 @@ public class Membership {
     private Long id;
 
     @Column(name = "member_from")
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date memberFrom;
 
     @Column(name = "member_to")
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date memberTo;
 
     @Column(name = "price")
