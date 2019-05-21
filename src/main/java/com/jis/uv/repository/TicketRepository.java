@@ -8,5 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
-    Page<Ticket> findAllByIsDeleted(Boolean isDeleted, Pageable pageRequest);
+    Page<Ticket> findAllByIsDeletedFalse(Pageable pageRequest);
+    Page<Ticket> findAllByIsDeletedTrue(Pageable pageRequest);
 }

@@ -20,42 +20,51 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/ticket")
 public class TicketController {
     @Autowired
-    TicketService ticketService;
+    private TicketService ticketService;
 
     @PostMapping
-    public Ticket insert(@RequestBody Ticket ticket) {
-        return ticketService.insert(ticket);
+    public ResponseEntity<Ticket> insert(@RequestBody Ticket ticket) {
+
+        Ticket insertedTicket = ticketService.insert(ticket);
+        if(insertedTicket == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(insertedTicket, HttpStatus.OK);
     }
 
-    @DeleteMapping
-    public void delete(@RequestBody Ticket ticket) {
-        ticketService.delete(ticket);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Boolean> delete(@PathVariable Long id) {
+        Boolean isDeleted = ticketService.delete(id);
+        if (isDeleted) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping(params = {"page", "size"})
-    public ResponseEntity<Page<Ticket>> findAll(@RequestParam("page") Integer page, @RequestParam("size") Integer size) {
+    @GetMapping
+    public ResponseEntity<Page<Ticket>> findAll(@RequestParam Integer page, @RequestParam Integer size) {
         Page<Ticket> tickets = ticketService.findAll(PageRequest.of(page, size));
-        if (tickets.isEmpty()) {
+        if (tickets.getContent().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(tickets, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Ticket> findById(@PathVariable("id") Long id) {
         Ticket ticket = ticketService.findById(id);
         if (ticket == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(ticket, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/deleted", params = {"page", "size"})
-    public ResponseEntity<Page<Ticket>> findAllDeleted(@RequestParam("page") Integer page, @RequestParam("size") Integer size) {
+    @GetMapping(value = "/deleted")
+    public ResponseEntity<Page<Ticket>> findAllDeleted(@RequestParam Integer page, @RequestParam Integer size) {
         Page<Ticket> tickets = ticketService.findAllDeleted(PageRequest.of(page, size));
         if (tickets.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(tickets, HttpStatus.OK);
     }
 }

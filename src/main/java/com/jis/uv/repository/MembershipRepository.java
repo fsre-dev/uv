@@ -8,5 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MembershipRepository extends JpaRepository<Membership, Long> {
-    Page<Membership> findAllByIsDeleted(Boolean isDeleted, Pageable pageRequest);
+    Page<Membership> findAllByIsDeletedFalse(Pageable pageRequest);
+    Page<Membership> findAllByIsDeletedTrue(Pageable pageRequest);
 }

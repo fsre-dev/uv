@@ -20,42 +20,50 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/membership")
 public class MembershipController {
     @Autowired
-    MembershipService membershipService;
+    private MembershipService membershipService;
 
     @PostMapping
-    public Membership insert(@RequestBody Membership membership) {
-        return membershipService.insert(membership);
+    public ResponseEntity<Membership> insert(@RequestBody Membership membership) {
+        Membership inserted = membershipService.insert(membership);
+        if(inserted == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping
-    public void delete(@RequestBody Membership membership) {
-        membershipService.delete(membership);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Boolean> delete(@PathVariable Long id) {
+        Boolean isDeleted = membershipService.delete(id);
+        if (isDeleted) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping(params = {"page", "size"})
-    public ResponseEntity<Page<Membership>> findAll(@RequestParam("page") Integer page, @RequestParam("size") Integer size) {
+    @GetMapping
+    public ResponseEntity<Page<Membership>> findAll(@RequestParam Integer page, @RequestParam Integer size) {
         Page<Membership> memberships = membershipService.findAll(PageRequest.of(page, size));
         if (memberships.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(memberships, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Membership> findById(@PathVariable Long id) {
         Membership membership = membershipService.findById(id);
         if (membership == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(membership, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/deleted", params = {"page", "size"})
-    public ResponseEntity<Page<Membership>> findAllDeleted(@RequestParam("page") Integer page, @RequestParam("size") Integer size) {
+    @GetMapping(value = "/deleted")
+    public ResponseEntity<Page<Membership>> findAllDeleted(@RequestParam Integer page, @RequestParam Integer size) {
         Page<Membership> memberships = membershipService.findAllDeleted(PageRequest.of(page, size));
         if (memberships == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(memberships, HttpStatus.OK);
     }
 }
