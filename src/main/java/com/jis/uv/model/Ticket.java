@@ -15,31 +15,31 @@ import javax.persistence.Table;
 public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", unique = true)
+    @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
-    @Column(name = "reservation_date")
+    @Column(name = "reservation_date", nullable = false)
     private Date reservationDate;
 
-    @Column(name = "game_date")
+    @Column(name = "game_date", nullable = false)
     private Date gameDate;
 
-    @Column(name = "opponent")
+    @Column(name = "opponent", nullable = false)
     private String opponent;
 
-    @Column(name = "sector")
+    @Column(name = "sector", nullable = false)
     private String sector;
 
-    @Column(name = "_row")
+    @Column(name = "_row", nullable = false)
     private String row;
 
-    @Column(name = "seat")
+    @Column(name = "seat", nullable = false)
     private String seat;
 
-    @Column(name = "price")
+    @Column(name = "price", nullable = false)
     private Double price;
 
-    @Column(name = "is_deleted")
+    @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
     @ManyToOne

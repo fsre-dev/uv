@@ -17,21 +17,21 @@ import java.sql.Date;
 public class Membership {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", unique = true)
+    @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
-    @Column(name = "member_from")
+    @Column(name = "member_from", nullable = false)
     @JsonFormat(pattern="yyyy-MM-dd")
     private Date memberFrom;
 
-    @Column(name = "member_to")
+    @Column(name = "member_to", nullable = false)
     @JsonFormat(pattern="yyyy-MM-dd")
     private Date memberTo;
 
-    @Column(name = "price")
+    @Column(name = "price", nullable = false)
     private Double price;
 
-    @Column(name = "is_deleted")
+    @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
     @ManyToOne
