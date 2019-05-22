@@ -9,21 +9,37 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MembershipService {
-    @Autowired
     private MembershipRepository membershipRepository;
+    private MembershipValidator membershipValidator;
 
-    public Membership insert(Membership membership) {
-        return membershipRepository.save(membership);
+    @Autowired
+    public MembershipService(MembershipRepository membershipRepository, MembershipValidator membershipValidator) {
+        this.membershipRepository = membershipRepository;
+        this.membershipValidator = membershipValidator;
     }
 
-    public Boolean delete(Long id) {
-        Membership membership = membershipRepository.getOne(id);
-        if(membership == null) {
-            return false;
+    public Membership create(Membership membership) throws Exception {
+        if (membershipValidator.validate(membership)) {
+            return membershipRepository.save(membership);
         }
-        membership.setIsDeleted(true);
-        membershipRepository.save(membership);
-        return true;
+        throw new Exception("Invalid membership");
+    }
+
+    public Membership update(Membership membership, Long id) throws Exception {
+        if (membershipValidator.validate(membership) && membershipValidator.isExisting(id)) {
+            membership.setId(id);
+            return membershipRepository.save(membership);
+        }
+        throw new Exception("Could not update membership !");
+    }
+
+    public void delete(Long id) throws Exception {
+        if (membershipValidator.isExisting(id)) {
+            Membership membership = this.findById(id);
+            membership.setIsDeleted(true);
+            membershipRepository.save(membership);
+        }
+        throw new Exception("Membership does not exist");
     }
 
     public Page<Membership> findAll(Pageable pageRequest) {

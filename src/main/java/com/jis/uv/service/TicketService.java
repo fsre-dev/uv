@@ -12,15 +12,17 @@ public class TicketService {
     @Autowired
     private TicketRepository ticketRepository;
 
-    public Ticket insert(Ticket ticket) {
+    public Ticket create(Ticket ticket) {
+        return ticketRepository.save(ticket);
+    }
+
+    public Ticket update(Ticket ticket, Long id) {
+        ticket.setId(id);
         return ticketRepository.save(ticket);
     }
 
     public Boolean delete(Long id) {
-        Ticket ticket = ticketRepository.getOne(id);
-        if (ticket == null) {
-            return false;
-        }
+        Ticket ticket = this.findById(id);
         ticket.setIsDeleted(true);
         ticketRepository.save(ticket);
         return true;

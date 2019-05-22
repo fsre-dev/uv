@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,25 +20,44 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/membership")
 public class MembershipController {
-    @Autowired
     private MembershipService membershipService;
 
+    @Autowired
+    public MembershipController(MembershipService membershipService) {
+        this.membershipService = membershipService;
+    }
+
     @PostMapping
-    public ResponseEntity<Membership> insert(@RequestBody Membership membership) {
-        Membership inserted = membershipService.insert(membership);
-        if(inserted == null) {
+    public ResponseEntity<Membership> create(@RequestBody Membership membership) {
+        try {
+            Membership inserted = membershipService.create(membership);
+            return new ResponseEntity<>(inserted, HttpStatus.OK);
+        } catch (Exception e) {
+            e.getMessage();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Membership> update(@RequestBody Membership membership, @PathVariable Long id) {
+        try {
+            Membership updatedMembership = membershipService.update(membership, id);
+            return new ResponseEntity<>(updatedMembership, HttpStatus.OK);
+        } catch (Exception e) {
+            e.getMessage();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> delete(@PathVariable Long id) {
-        Boolean isDeleted = membershipService.delete(id);
-        if (isDeleted) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        try {
+            membershipService.delete(id);
             return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            e.getMessage();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping

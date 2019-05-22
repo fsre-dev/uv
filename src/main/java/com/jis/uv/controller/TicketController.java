@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,13 +24,22 @@ public class TicketController {
     private TicketService ticketService;
 
     @PostMapping
-    public ResponseEntity<Ticket> insert(@RequestBody Ticket ticket) {
+    public ResponseEntity<Ticket> create(@RequestBody Ticket ticket) {
 
-        Ticket insertedTicket = ticketService.insert(ticket);
-        if(insertedTicket == null) {
+        Ticket insertedTicket = ticketService.create(ticket);
+        if (insertedTicket == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(insertedTicket, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Ticket> update(@RequestBody Ticket ticket, @PathVariable Long id) {
+        Ticket updatedTicket = ticketService.update(ticket, id);
+        if (updatedTicket == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(updatedTicket, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

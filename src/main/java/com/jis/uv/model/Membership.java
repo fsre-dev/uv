@@ -35,7 +35,7 @@ public class Membership {
     private Boolean isDeleted;
 
     @ManyToOne
-    @JoinColumn(name = "member")
+    @JoinColumn(name = "member", nullable = false)
     private Member member;
 
     public Membership() {
