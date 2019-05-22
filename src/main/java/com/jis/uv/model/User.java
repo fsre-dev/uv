@@ -18,20 +18,20 @@ public class User {
     @Column(name = "id", unique = true)
     private Long id;
 
-    @Column(name = "username", unique = true)
+    @Column(name = "username", unique = true, nullable = false)
     private String username;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "email", unique = true)
+    @Column(name = "email", unique = true, nullable = false)
     private String eMail;
 
-    @Column(name = "role")
+    @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private RoleEnum role;
 
-    @Column(name = "isdeleted")
+    @Column(name = "isdeleted", nullable = false)
     private Boolean isDeleted;
 
     public Long getId() {

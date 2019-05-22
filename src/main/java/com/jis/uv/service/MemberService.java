@@ -7,8 +7,10 @@ import com.jis.uv.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.util.List;
 
 @Service
@@ -17,12 +19,21 @@ public class MemberService {
     @Autowired
     private MemberRepository memberRepository;
 
+    private final String emailDomainRegex = "^[\\w-\\+]+(\\.[\\w]+)*@[\\w-]+(\\.[\\w]+)*(\\.[a-z]{2,})$";
+    private final String onlyDigitsRegex = "^[0-9]*$";
+    private final String phoneAndCellNumberRegex = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$";
+    private final String identityCardRegex = "^[A-Za-z0-9]+$";
+
     public List<Member> findAll() {
         return memberRepository.findAll();
     }
 
     public Page<Member> findAll(Pageable pageRequest) {
         return memberRepository.findAll(pageRequest);
+    }
+
+    public Page<Member> findAllDynamic(Pageable pageRequest, Specification<Member> specification) {
+        return memberRepository.findAll(specification, pageRequest);
     }
 
     public Page<Member> findAllByFirstName(String firstName, Pageable pageRequest) {
@@ -81,7 +92,12 @@ public class MemberService {
         return memberRepository.findByCardNumber(cardNumber);
     }
 
+    public Member findByIdentityCard(String identityCard) {
+        return memberRepository.findByIdentityCard(identityCard);
+    }
+
     public Member createMember(Member member) {
+        member.setDeleted(false);
         return memberRepository.save(member);
     }
 
@@ -98,4 +114,35 @@ public class MemberService {
     public void deletePermanentlyMember(Long id) {
         memberRepository.deleteById(id);
     }
+
+    public Boolean validateMember(Member member) {
+
+        if (!member.getEmail().matches(emailDomainRegex)) {
+            return false;
+        }
+        if (!member.getOib().matches(onlyDigitsRegex) || member.getOib().length() != 11) {
+            return false;
+        }
+        if (!member.getCardNumber().matches(onlyDigitsRegex) || member.getCardNumber().length() != 16) {
+            return false;
+        }
+        if (!member.getPassportNumber().matches(onlyDigitsRegex) || member.getPassportNumber().length() != 9) {
+            return false;
+        }
+        if (!member.getIdentityCard().matches(identityCardRegex) || member.getIdentityCard().length() != 9) {
+            return false;
+        }
+        if (!member.getPhoneNumber().matches(phoneAndCellNumberRegex)) {
+            return false;
+        }
+        if (!member.getCellNumber().matches(phoneAndCellNumberRegex)) {
+            return false;
+        }
+        if (member.getBirthDate().after(new Date(System.currentTimeMillis()))) {
+            return false;
+        }
+
+        return true;
+    }
+
 }

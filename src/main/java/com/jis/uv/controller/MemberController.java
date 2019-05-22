@@ -4,9 +4,13 @@ import com.jis.uv.model.Member;
 import com.jis.uv.model.enums.Gender;
 import com.jis.uv.model.enums.MemberTypeEnum;
 import com.jis.uv.service.MemberService;
+import net.kaczmarzyk.spring.data.jpa.domain.Equal;
+import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
+import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,8 +42,19 @@ public class MemberController {
     }
 
     @GetMapping(value = "/all", params = {"page", "size"})
-    private ResponseEntity<Page<Member>> findAll(@RequestParam("page") Integer page, @RequestParam("size") Integer size) {
-        Page<Member> members = memberService.findAll(PageRequest.of(page, size));
+    private ResponseEntity<Page<Member>> findAllDynamic(@And({
+        @Spec(path = "firstName", spec = Equal.class),
+        @Spec(path = "lastName", spec = Equal.class),
+        @Spec(path = "memberType", spec = Equal.class),
+        @Spec(path = "gender", spec = Equal.class),
+        @Spec(path = "address", spec = Equal.class),
+        @Spec(path = "city", spec = Equal.class),
+        @Spec(path = "state", spec = Equal.class),
+        @Spec(path = "phoneNumber", spec = Equal.class),
+        @Spec(path = "cellNumber", spec = Equal.class),
+        @Spec(path = "isDeleted", spec = Equal.class)
+    }) Specification<Member> specification, @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
+        Page<Member> members = memberService.findAllDynamic(PageRequest.of(page, size), specification);
         if (members.isEmpty() || members == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -172,8 +187,20 @@ public class MemberController {
         return new ResponseEntity<>(member, HttpStatus.OK);
     }
 
+    @GetMapping(params = {"identitycard"})
+    private ResponseEntity<Member> findByIdentityCard(@RequestParam("identitycard") String identityCard) {
+        Member member = memberService.findByIdentityCard(identityCard);
+        if (member == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(member, HttpStatus.OK);
+    }
+
     @PostMapping
     private ResponseEntity<Member> createMember(@RequestBody Member member) {
+        if (memberService.validateMember(member)) {
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+        }
         Member createdMember = memberService.createMember(member);
         return new ResponseEntity<>(createdMember, HttpStatus.CREATED);
     }
@@ -183,6 +210,9 @@ public class MemberController {
         Member updatedMember = memberService.findById(id);
         if (updatedMember == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        if (!memberService.validateMember(member)) {
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
         updatedMember = memberService.updateMember(member, id);
         return new ResponseEntity<>(updatedMember, HttpStatus.ACCEPTED);

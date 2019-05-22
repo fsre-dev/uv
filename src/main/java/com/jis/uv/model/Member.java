@@ -19,54 +19,57 @@ public class Member {
     @Column(name = "id", unique = true)
     private Long id;
 
-    @Column(name = "first_name")
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "card_number", unique = true)
+    @Column(name = "card_number", unique = true, nullable = false)
     private String cardNumber;
 
-    @Column(name = "member_type")
+    @Column(name = "member_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private MemberTypeEnum memberType;
 
-    @Column(name = "gender")
+    @Column(name = "gender", nullable = false)
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(name = "address")
+    @Column(name = "address", nullable = false)
     private String address;
 
-    @Column(name = "zip")
+    @Column(name = "zip", nullable = false)
     private String zip;
 
-    @Column(name = "city")
+    @Column(name = "city", nullable = false)
     private String city;
 
-    @Column(name = "state")
+    @Column(name = "state", nullable = false)
     private String state;
 
-    @Column(name = "phone_number", unique = true)
+    @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(name = "cell_number", unique = true)
+    @Column(name = "cell_number")
     private String cellNumber;
 
-    @Column(name = "email", unique = true)
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    @Column(name = "birth_date")
+    @Column(name = "birth_date", nullable = false)
     private Date birthDate;
 
-    @Column(name = "passport_number", unique = true)
+    @Column(name = "passport_number", unique = true, nullable = false)
     private String passportNumber;
+
+    @Column(name = "identity_card", unique = true)
+    private String identityCard;
 
     @Column(name = "oib", unique = true)
     private String oib;
 
-    @Column(name = "isdeleted")
+    @Column(name = "isdeleted", nullable = false)
     private Boolean isDeleted;
 
     public Member() {
@@ -74,7 +77,7 @@ public class Member {
 
     public Member(String firstName, String lastName, String cardNumber, MemberTypeEnum memberType, Gender gender,
                   String address, String zip, String city, String state, String phoneNumber, String cellNumber, String email,
-                  Date birthDate, String passportNumber, String oib) {
+                  Date birthDate, String passportNumber, String oib, String identityCard, Boolean isDeleted) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.cardNumber = cardNumber;
@@ -90,6 +93,8 @@ public class Member {
         this.birthDate = birthDate;
         this.passportNumber = passportNumber;
         this.oib = oib;
+        this.identityCard = identityCard;
+        this.isDeleted = isDeleted;
     }
 
     public Long getId() {
@@ -218,6 +223,14 @@ public class Member {
 
     public void setOib(String oib) {
         this.oib = oib;
+    }
+
+    public String getIdentityCard() {
+        return identityCard;
+    }
+
+    public void setIdentityCard(String identityCard) {
+        this.identityCard = identityCard;
     }
 
     public Boolean getDeleted() {
