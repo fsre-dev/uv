@@ -17,44 +17,56 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/ticket")
 public class TicketController {
+    private final TicketService ticketService;
+
     @Autowired
-    private TicketService ticketService;
+    public TicketController(TicketService ticketService) {
+        this.ticketService = ticketService;
+    }
 
     @PostMapping
     public ResponseEntity<Ticket> create(@RequestBody Ticket ticket) {
-
-        Ticket insertedTicket = ticketService.create(ticket);
-        if (insertedTicket == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        try {
+            Ticket insertedTicket = ticketService.create(ticket);
+            return ResponseEntity.ok(insertedTicket);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
         }
-        return new ResponseEntity<>(insertedTicket, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Ticket> update(@RequestBody Ticket ticket, @PathVariable Long id) {
-        Ticket updatedTicket = ticketService.update(ticket, id);
-        if (updatedTicket == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        try {
+            Ticket updatedTicket = ticketService.update(ticket, id);
+            return ResponseEntity.ok(updatedTicket);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<>(updatedTicket, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> delete(@PathVariable Long id) {
-        Boolean isDeleted = ticketService.delete(id);
-        if (isDeleted) {
-            return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        try {
+            ticketService.delete(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping
-    public ResponseEntity<Page<Ticket>> findAll(@RequestParam Integer page, @RequestParam Integer size) {
-        Page<Ticket> tickets = ticketService.findAll(PageRequest.of(page, size));
-        if (tickets.getContent().isEmpty()) {
+    public ResponseEntity<List<Ticket>> findAll(@RequestParam Integer page, @RequestParam Integer size) {
+        List<Ticket> tickets = ticketService.findAll(PageRequest.of(page, size));
+        if (tickets.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(tickets, HttpStatus.OK);
@@ -62,16 +74,17 @@ public class TicketController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Ticket> findById(@PathVariable("id") Long id) {
-        Ticket ticket = ticketService.findById(id);
-        if (ticket == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        Optional<Ticket> existingTicket = ticketService.findById(id);
+        if (existingTicket.isPresent()) {
+            Ticket ticket = existingTicket.get();
+            return ResponseEntity.ok(ticket);
         }
-        return new ResponseEntity<>(ticket, HttpStatus.OK);
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping(value = "/deleted")
-    public ResponseEntity<Page<Ticket>> findAllDeleted(@RequestParam Integer page, @RequestParam Integer size) {
-        Page<Ticket> tickets = ticketService.findAllDeleted(PageRequest.of(page, size));
+    public ResponseEntity<List<Ticket>> findAllDeleted(@RequestParam Integer page, @RequestParam Integer size) {
+        List<Ticket> tickets = ticketService.findAllDeleted(PageRequest.of(page, size));
         if (tickets.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

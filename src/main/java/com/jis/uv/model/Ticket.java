@@ -1,5 +1,7 @@
 package com.jis.uv.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.sql.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,9 +21,11 @@ public class Ticket {
     private Long id;
 
     @Column(name = "reservation_date", nullable = false)
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date reservationDate;
 
     @Column(name = "game_date", nullable = false)
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date gameDate;
 
     @Column(name = "opponent", nullable = false)

@@ -3,9 +3,7 @@ package com.jis.uv.controller;
 import com.jis.uv.model.Membership;
 import com.jis.uv.service.MembershipService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/membership")
@@ -30,11 +31,11 @@ public class MembershipController {
     @PostMapping
     public ResponseEntity<Membership> create(@RequestBody Membership membership) {
         try {
-            Membership inserted = membershipService.create(membership);
-            return new ResponseEntity<>(inserted, HttpStatus.OK);
+            Membership insertedMembership = membershipService.create(membership);
+            return ResponseEntity.ok(insertedMembership);
         } catch (Exception e) {
             e.getMessage();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
     }
 
@@ -42,10 +43,10 @@ public class MembershipController {
     public ResponseEntity<Membership> update(@RequestBody Membership membership, @PathVariable Long id) {
         try {
             Membership updatedMembership = membershipService.update(membership, id);
-            return new ResponseEntity<>(updatedMembership, HttpStatus.OK);
+            return ResponseEntity.ok(updatedMembership);
         } catch (Exception e) {
             e.getMessage();
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -53,37 +54,38 @@ public class MembershipController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         try {
             membershipService.delete(id);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
             e.getMessage();
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
     }
 
     @GetMapping
-    public ResponseEntity<Page<Membership>> findAll(@RequestParam Integer page, @RequestParam Integer size) {
-        Page<Membership> memberships = membershipService.findAll(PageRequest.of(page, size));
+    public ResponseEntity<List<Membership>> findAll(@RequestParam Integer page, @RequestParam Integer size) {
+        List<Membership> memberships = membershipService.findAll(PageRequest.of(page, size));
         if (memberships.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return ResponseEntity.noContent().build();
         }
-        return new ResponseEntity<>(memberships, HttpStatus.OK);
+        return ResponseEntity.ok(memberships);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Membership> findById(@PathVariable Long id) {
-        Membership membership = membershipService.findById(id);
-        if (membership == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        Optional<Membership> existingMembership = membershipService.findById(id);
+        if (existingMembership.isPresent()) {
+            Membership membership = existingMembership.get();
+            return ResponseEntity.ok(membership);
         }
-        return new ResponseEntity<>(membership, HttpStatus.OK);
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping(value = "/deleted")
-    public ResponseEntity<Page<Membership>> findAllDeleted(@RequestParam Integer page, @RequestParam Integer size) {
-        Page<Membership> memberships = membershipService.findAllDeleted(PageRequest.of(page, size));
-        if (memberships == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<List<Membership>> findAllDeleted(@RequestParam Integer page, @RequestParam Integer size) {
+        List<Membership> memberships = membershipService.findAllDeleted(PageRequest.of(page, size));
+        if (memberships.isEmpty()) {
+            return ResponseEntity.noContent().build();
         }
-        return new ResponseEntity<>(memberships, HttpStatus.OK);
+        return ResponseEntity.ok(memberships);
     }
 }

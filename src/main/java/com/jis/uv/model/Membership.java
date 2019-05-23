@@ -8,7 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.sql.Date;
 
@@ -21,11 +21,11 @@ public class Membership {
     private Long id;
 
     @Column(name = "member_from", nullable = false)
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date memberFrom;
 
     @Column(name = "member_to", nullable = false)
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date memberTo;
 
     @Column(name = "price", nullable = false)
@@ -34,8 +34,7 @@ public class Membership {
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
-    @ManyToOne
-    @JoinColumn(name = "member", nullable = false)
+    @OneToOne(mappedBy = "member")
     private Member member;
 
     public Membership() {

@@ -3,40 +3,58 @@ package com.jis.uv.service;
 import com.jis.uv.model.Ticket;
 import com.jis.uv.repository.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class TicketService {
-    @Autowired
     private TicketRepository ticketRepository;
+    private TicketValidator ticketValidator;
 
-    public Ticket create(Ticket ticket) {
-        return ticketRepository.save(ticket);
+    @Autowired
+    public TicketService(TicketRepository ticketRepository, TicketValidator ticketValidator) {
+        this.ticketRepository = ticketRepository;
+        this.ticketValidator = ticketValidator;
     }
 
-    public Ticket update(Ticket ticket, Long id) {
-        ticket.setId(id);
-        return ticketRepository.save(ticket);
+    public Ticket create(Ticket ticket) throws Exception {
+        if (ticketValidator.validate(ticket)) {
+            return ticketRepository.save(ticket);
+        }
+        throw new Exception("Invalid ticket");
     }
 
-    public Boolean delete(Long id) {
-        Ticket ticket = this.findById(id);
-        ticket.setIsDeleted(true);
-        ticketRepository.save(ticket);
-        return true;
+    public Ticket update(Ticket ticket, Long id) throws Exception {
+        Optional<Ticket> existingTicket = this.findById(id);
+        if (ticketValidator.validate(ticket) && existingTicket.isPresent()) {
+            ticket.setId(id);
+            return ticketRepository.save(ticket);
+        }
+        throw new Exception("Could not update ticket");
     }
 
-    public Page<Ticket> findAll(Pageable pageRequest) {
-        return ticketRepository.findAllByIsDeletedFalse(pageRequest);
+    public void delete(Long id) throws Exception {
+        Optional<Ticket> ticket = this.findById(id);
+        if (ticket.isPresent()) {
+            Ticket deleteTicket = ticket.get();
+            deleteTicket.setIsDeleted(true);
+            ticketRepository.save(deleteTicket);
+        }
+        throw new Exception("Ticket does not exist");
     }
 
-    public Ticket findById(Long id) {
-        return ticketRepository.findById(id).orElse(null);
+    public List<Ticket> findAll(Pageable pageRequest) {
+        return ticketRepository.findAllByIsDeletedFalse(pageRequest).getContent();
     }
 
-    public Page<Ticket> findAllDeleted(Pageable pageRequest) {
-        return ticketRepository.findAllByIsDeletedTrue(pageRequest);
+    public Optional<Ticket> findById(Long id) {
+        return ticketRepository.findById(id);
+    }
+
+    public List<Ticket> findAllDeleted(Pageable pageRequest) {
+        return ticketRepository.findAllByIsDeletedTrue(pageRequest).getContent();
     }
 }
