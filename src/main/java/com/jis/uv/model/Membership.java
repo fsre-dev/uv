@@ -2,15 +2,14 @@ package com.jis.uv.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import java.sql.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import java.sql.Date;
 
 @Entity
 @Table(name = "membership")
@@ -34,7 +33,7 @@ public class Membership {
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
-    @OneToOne(mappedBy = "member")
+    @OneToOne(mappedBy = "membership")
     private Member member;
 
     public Membership() {

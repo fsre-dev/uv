@@ -11,6 +11,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Member {
@@ -69,6 +71,10 @@ public class Member {
     @Column(name = "oib", unique = true)
     private String oib;
 
+    @OneToOne
+    @JoinColumn(name = "membership_id")
+    private Membership membership;
+
     @Column(name = "isdeleted", nullable = false)
     private Boolean isDeleted;
 
@@ -77,7 +83,7 @@ public class Member {
 
     public Member(String firstName, String lastName, String cardNumber, MemberTypeEnum memberType, Gender gender,
                   String address, String zip, String city, String state, String phoneNumber, String cellNumber, String email,
-                  Date birthDate, String passportNumber, String oib, String identityCard, Boolean isDeleted) {
+                  Date birthDate, String passportNumber, String oib, String identityCard, Boolean isDeleted, Membership membership) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.cardNumber = cardNumber;
@@ -95,6 +101,7 @@ public class Member {
         this.oib = oib;
         this.identityCard = identityCard;
         this.isDeleted = isDeleted;
+        this.membership = membership;
     }
 
     public Long getId() {
@@ -231,6 +238,14 @@ public class Member {
 
     public void setIdentityCard(String identityCard) {
         this.identityCard = identityCard;
+    }
+
+    public Membership getMembership() {
+        return membership;
+    }
+
+    public void setMembership(Membership membership) {
+        this.membership = membership;
     }
 
     public Boolean getDeleted() {
