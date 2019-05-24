@@ -255,4 +255,29 @@ public class Member {
     public void setDeleted(Boolean deleted) {
         isDeleted = deleted;
     }
+
+    @Override
+    public String toString() {
+        return "Member{" +
+            "id=" + id +
+            ", firstName='" + firstName + '\'' +
+            ", lastName='" + lastName + '\'' +
+            ", cardNumber='" + cardNumber + '\'' +
+            ", memberType=" + memberType +
+            ", gender=" + gender +
+            ", address='" + address + '\'' +
+            ", zip='" + zip + '\'' +
+            ", city='" + city + '\'' +
+            ", state='" + state + '\'' +
+            ", phoneNumber='" + phoneNumber + '\'' +
+            ", cellNumber='" + cellNumber + '\'' +
+            ", email='" + email + '\'' +
+            ", birthDate=" + birthDate +
+            ", passportNumber='" + passportNumber + '\'' +
+            ", identityCard='" + identityCard + '\'' +
+            ", oib='" + oib + '\'' +
+            ", membership=" + membership +
+            ", isDeleted=" + isDeleted +
+            '}';
+    }
 }
