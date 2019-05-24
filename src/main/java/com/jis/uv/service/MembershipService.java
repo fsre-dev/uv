@@ -3,6 +3,7 @@ package com.jis.uv.service;
 import com.jis.uv.model.Membership;
 import com.jis.uv.repository.MembershipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -39,15 +40,16 @@ public class MembershipService {
     public void delete(Long id) throws Exception {
         Optional<Membership> membership = this.findById(id);
         if (membership.isPresent()) {
-            Membership deleteMembership = membership.get();
-            deleteMembership.setIsDeleted(true);
-            membershipRepository.save(deleteMembership);
+            Membership deletedMembership = membership.get();
+            deletedMembership.setIsDeleted(true);
+            membershipRepository.save(deletedMembership);
         }
         throw new Exception("Membership does not exist");
     }
 
     public List<Membership> findAll(Pageable pageRequest) {
-        return membershipRepository.findAllByIsDeletedFalse(pageRequest).getContent();
+        Page<Membership> pageableMemberships = membershipRepository.findAllByIsDeletedFalse(pageRequest);
+        return pageableMemberships.getContent();
     }
 
     public Optional<Membership> findById(Long id) {
@@ -55,6 +57,7 @@ public class MembershipService {
     }
 
     public List<Membership> findAllDeleted(Pageable pageRequest) {
-        return membershipRepository.findAllByIsDeletedTrue(pageRequest).getContent();
+        Page<Membership> pageableMemberships = membershipRepository.findAllByIsDeletedTrue(pageRequest);
+        return pageableMemberships.getContent();
     }
 }

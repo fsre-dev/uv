@@ -3,9 +3,7 @@ package com.jis.uv.controller;
 import com.jis.uv.model.Ticket;
 import com.jis.uv.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -67,17 +65,16 @@ public class TicketController {
     public ResponseEntity<List<Ticket>> findAll(@RequestParam Integer page, @RequestParam Integer size) {
         List<Ticket> tickets = ticketService.findAll(PageRequest.of(page, size));
         if (tickets.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<>(tickets, HttpStatus.OK);
+        return ResponseEntity.ok(tickets);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Ticket> findById(@PathVariable("id") Long id) {
         Optional<Ticket> existingTicket = ticketService.findById(id);
         if (existingTicket.isPresent()) {
-            Ticket ticket = existingTicket.get();
-            return ResponseEntity.ok(ticket);
+            return ResponseEntity.ok(existingTicket.get());
         }
         return ResponseEntity.notFound().build();
     }
@@ -86,8 +83,8 @@ public class TicketController {
     public ResponseEntity<List<Ticket>> findAllDeleted(@RequestParam Integer page, @RequestParam Integer size) {
         List<Ticket> tickets = ticketService.findAllDeleted(PageRequest.of(page, size));
         if (tickets.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<>(tickets, HttpStatus.OK);
+        return ResponseEntity.ok(tickets);
     }
 }

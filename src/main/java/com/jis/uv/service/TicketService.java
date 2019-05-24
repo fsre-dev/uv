@@ -3,6 +3,7 @@ package com.jis.uv.service;
 import com.jis.uv.model.Ticket;
 import com.jis.uv.repository.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -39,15 +40,16 @@ public class TicketService {
     public void delete(Long id) throws Exception {
         Optional<Ticket> ticket = this.findById(id);
         if (ticket.isPresent()) {
-            Ticket deleteTicket = ticket.get();
-            deleteTicket.setIsDeleted(true);
-            ticketRepository.save(deleteTicket);
+            Ticket deletedTicket = ticket.get();
+            deletedTicket.setIsDeleted(true);
+            ticketRepository.save(deletedTicket);
         }
         throw new Exception("Ticket does not exist");
     }
 
     public List<Ticket> findAll(Pageable pageRequest) {
-        return ticketRepository.findAllByIsDeletedFalse(pageRequest).getContent();
+        Page<Ticket> pageableTickets = ticketRepository.findAllByIsDeletedFalse(pageRequest);
+        return pageableTickets.getContent();
     }
 
     public Optional<Ticket> findById(Long id) {
@@ -55,6 +57,7 @@ public class TicketService {
     }
 
     public List<Ticket> findAllDeleted(Pageable pageRequest) {
-        return ticketRepository.findAllByIsDeletedTrue(pageRequest).getContent();
+        Page<Ticket> pageableTickets = ticketRepository.findAllByIsDeletedTrue(pageRequest);
+        return pageableTickets.getContent();
     }
 }

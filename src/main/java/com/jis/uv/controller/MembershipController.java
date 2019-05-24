@@ -65,7 +65,7 @@ public class MembershipController {
     public ResponseEntity<List<Membership>> findAll(@RequestParam Integer page, @RequestParam Integer size) {
         List<Membership> memberships = membershipService.findAll(PageRequest.of(page, size));
         if (memberships.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(memberships);
     }
@@ -74,8 +74,7 @@ public class MembershipController {
     public ResponseEntity<Membership> findById(@PathVariable Long id) {
         Optional<Membership> existingMembership = membershipService.findById(id);
         if (existingMembership.isPresent()) {
-            Membership membership = existingMembership.get();
-            return ResponseEntity.ok(membership);
+            return ResponseEntity.ok(existingMembership.get());
         }
         return ResponseEntity.notFound().build();
     }
@@ -84,7 +83,7 @@ public class MembershipController {
     public ResponseEntity<List<Membership>> findAllDeleted(@RequestParam Integer page, @RequestParam Integer size) {
         List<Membership> memberships = membershipService.findAllDeleted(PageRequest.of(page, size));
         if (memberships.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(memberships);
     }
