@@ -255,8 +255,12 @@ public class MemberController {
             logger.error("Unable to update member with id {}", id);
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
+        if(updatedMember.equals(member)){
+            logger.info("No changes were made for member with id {}", id);
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         updatedMember = memberService.updateMember(member, id);
-        logger.info("Member created: {}", member.toString());
+        logger.info("Member updated: {}", member.toString());
         return new ResponseEntity<>(updatedMember, HttpStatus.ACCEPTED);
     }
 
@@ -267,9 +271,17 @@ public class MemberController {
             logger.info("Unable to find member with {}", id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        deletedMember = memberService.deleteMember(deletedMember);
-        logger.info("Member deleted: {}", deletedMember.toString());
-        return new ResponseEntity<>(deletedMember, HttpStatus.ACCEPTED);
+        try {
+            deletedMember = memberService.deleteMember(deletedMember);
+            logger.info("Member deleted: {}", deletedMember.toString());
+            return new ResponseEntity<>(deletedMember, HttpStatus.ACCEPTED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info("Member couldn't be deleted: {}", deletedMember.toString());
+            return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+        }
+
+
     }
 
     @DeleteMapping(value = "/deletePermanently/{id}")

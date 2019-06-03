@@ -1,23 +1,36 @@
 package com.jis.uv.service;
 
 import com.jis.uv.model.Member;
+import com.jis.uv.model.MemberAudit;
+import com.jis.uv.model.Membership;
+import com.jis.uv.model.enums.ActionEnum;
 import com.jis.uv.model.enums.Gender;
 import com.jis.uv.model.enums.MemberTypeEnum;
+import com.jis.uv.repository.MemberAuditRepository;
 import com.jis.uv.repository.MemberRepository;
+import com.jis.uv.repository.MembershipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
 import java.util.List;
+
 
 @Service
 public class MemberService {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private MemberAuditRepository memberAuditRepository;
+
+    @Autowired
+    private MembershipService membershipService;
 
     private final String emailDomainRegex = "^[\\w-\\+]+(\\.[\\w]+)*@[\\w-]+(\\.[\\w]+)*(\\.[a-z]{2,})$";
     private final String onlyDigitsRegex = "^[0-9]*$";
@@ -96,20 +109,46 @@ public class MemberService {
         return memberRepository.findByIdentityCard(identityCard);
     }
 
+    @Transactional
     public Member createMember(Member member) {
         member.setDeleted(false);
-        return memberRepository.save(member);
+        Member createdMember = memberRepository.save(member);
+
+        MemberAudit createdMemberAudit = new MemberAudit(createdMember);
+        createdMemberAudit.setAction(ActionEnum.ADD);
+
+        memberAuditRepository.saveAndFlush(createdMemberAudit);
+        return createdMember;
     }
 
+    @Transactional
     public Member updateMember(Member member, Long id) {
         member.setId(id);
-        return memberRepository.save(member);
+        Member updatedMember = memberRepository.save(member);
+
+
+        MemberAudit updatedMemberAudit = new MemberAudit(updatedMember);
+        updatedMemberAudit.setAction(ActionEnum.UPD);
+
+        memberAuditRepository.saveAndFlush(updatedMemberAudit);
+        return updatedMember;
     }
 
-    public Member deleteMember(Member member) {
+    @Transactional
+    public Member deleteMember(Member member) throws Exception {
         member.setDeleted(true);
-        return memberRepository.save(member);
+        Member terminatedMember = memberRepository.save(member);
+
+        MemberAudit terminatedMemberAudit = new MemberAudit(terminatedMember);
+        terminatedMemberAudit.setAction(ActionEnum.TERM);
+
+        Membership membership = membershipService.findById(terminatedMember.getMembership().getId()).get();
+        membershipService.delete(membership.getId());
+
+        memberAuditRepository.saveAndFlush(terminatedMemberAudit);
+        return terminatedMember;
     }
+
 
     public void deletePermanentlyMember(Long id) {
         memberRepository.deleteById(id);

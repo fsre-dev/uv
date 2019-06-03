@@ -1,6 +1,7 @@
 package com.jis.uv.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.sql.Date;
 import javax.persistence.Column;
@@ -34,6 +35,7 @@ public class Membership {
     private Boolean isDeleted;
 
     @OneToOne(mappedBy = "membership")
+    @JsonIgnore
     private Member member;
 
     public Membership() {

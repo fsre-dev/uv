@@ -1,10 +1,10 @@
 package com.jis.uv.model;
 
+import com.jis.uv.model.enums.ActionEnum;
 import com.jis.uv.model.enums.Gender;
 import com.jis.uv.model.enums.MemberTypeEnum;
 
 import java.sql.Date;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,43 +12,50 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+
 
 @Entity
-public class Member {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", unique = true)
-    private Long id;
+public class MemberAudit {
 
-    @Column(name = "first_name", nullable = false)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "rev_id")
+    private Long revId;
+
+    @Column(name = "action")
+    @Enumerated(EnumType.STRING)
+    private ActionEnum action;
+
+    @Column(name = "member_id")
+    private Long memberId;
+
+    @Column(name = "first_name")
     private String firstName;
 
-    @Column(name = "last_name", nullable = false)
+    @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "card_number", unique = true, nullable = false)
+    @Column(name = "card_number")
     private String cardNumber;
 
-    @Column(name = "member_type", nullable = false)
+    @Column(name = "member_type")
     @Enumerated(EnumType.STRING)
     private MemberTypeEnum memberType;
 
-    @Column(name = "gender", nullable = false)
+    @Column(name = "gender")
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(name = "address", nullable = false)
+    @Column(name = "address")
     private String address;
 
-    @Column(name = "zip", nullable = false)
+    @Column(name = "zip")
     private String zip;
 
-    @Column(name = "city", nullable = false)
+    @Column(name = "city")
     private String city;
 
-    @Column(name = "state", nullable = false)
+    @Column(name = "state")
     private String state;
 
     @Column(name = "phone_number")
@@ -57,60 +64,74 @@ public class Member {
     @Column(name = "cell_number")
     private String cellNumber;
 
-    @Column(name = "email", unique = true, nullable = false)
+    @Column(name = "email")
     private String email;
 
-    @Column(name = "birth_date", nullable = false)
+    @Column(name = "birth_date")
     private Date birthDate;
 
-    @Column(name = "passport_number", unique = true, nullable = false)
+    @Column(name = "passport_number")
     private String passportNumber;
 
-    @Column(name = "identity_card", unique = true)
+    @Column(name = "identity_card")
     private String identityCard;
 
-    @Column(name = "oib", unique = true)
+    @Column(name = "oib")
     private String oib;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "membership_id", nullable = false)
-    private Membership membership;
+    @Column(name = "membership_id")
+    private Long membershipId;
 
-    @Column(name = "isdeleted", nullable = false)
+    @Column(name = "isdeleted")
     private Boolean isDeleted;
 
-    public Member() {
+    public MemberAudit() {
     }
 
-    public Member(String firstName, String lastName, String cardNumber, MemberTypeEnum memberType, Gender gender,
-                  String address, String zip, String city, String state, String phoneNumber, String cellNumber, String email,
-                  Date birthDate, String passportNumber, String oib, String identityCard, Boolean isDeleted, Membership membership) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.cardNumber = cardNumber;
-        this.memberType = memberType;
-        this.gender = gender;
-        this.address = address;
-        this.zip = zip;
-        this.city = city;
-        this.state = state;
-        this.phoneNumber = phoneNumber;
-        this.cellNumber = cellNumber;
-        this.email = email;
-        this.birthDate = birthDate;
-        this.passportNumber = passportNumber;
-        this.oib = oib;
-        this.identityCard = identityCard;
-        this.isDeleted = isDeleted;
-        this.membership = membership;
+    public MemberAudit(Member member) {
+        this.memberId = member.getId();
+        this.membershipId = member.getMembership().getId();
+        this.firstName = member.getFirstName();
+        this.lastName = member.getLastName();
+        this.gender = member.getGender();
+        this.memberType = member.getMemberType();
+        this.address = member.getAddress();
+        this.email = member.getEmail();
+        this.zip = member.getZip();
+        this.city = member.getCity();
+        this.state = member.getState();
+        this.birthDate = member.getBirthDate();
+        this.cardNumber = member.getCardNumber();
+        this.passportNumber = member.getPassportNumber();
+        this.cellNumber = member.getCellNumber();
+        this.phoneNumber = member.getPhoneNumber();
+        this.oib = member.getOib();
+        this.identityCard = member.getIdentityCard();
+        this.isDeleted = member.getDeleted();
     }
 
-    public Long getId() {
-        return id;
+    public Long getRevId() {
+        return revId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setRevId(Long revId) {
+        this.revId = revId;
+    }
+
+    public ActionEnum getAction() {
+        return action;
+    }
+
+    public void setAction(ActionEnum action) {
+        this.action = action;
+    }
+
+    public Long getMemberId() {
+        return memberId;
+    }
+
+    public void setMemberId(Long memberId) {
+        this.memberId = memberId;
     }
 
     public String getFirstName() {
@@ -225,14 +246,6 @@ public class Member {
         this.passportNumber = passportNumber;
     }
 
-    public String getOib() {
-        return oib;
-    }
-
-    public void setOib(String oib) {
-        this.oib = oib;
-    }
-
     public String getIdentityCard() {
         return identityCard;
     }
@@ -241,12 +254,20 @@ public class Member {
         this.identityCard = identityCard;
     }
 
-    public Membership getMembership() {
-        return membership;
+    public String getOib() {
+        return oib;
     }
 
-    public void setMembership(Membership membership) {
-        this.membership = membership;
+    public void setOib(String oib) {
+        this.oib = oib;
+    }
+
+    public Long getMembershipId() {
+        return membershipId;
+    }
+
+    public void setMembershipId(Long membershipId) {
+        this.membershipId = membershipId;
     }
 
     public Boolean getDeleted() {
@@ -259,8 +280,10 @@ public class Member {
 
     @Override
     public String toString() {
-        return "Member{" +
-            "id=" + id +
+        return "MemberAudit{" +
+            "revId=" + revId +
+            ", action=" + action +
+            ", memberId=" + memberId +
             ", firstName='" + firstName + '\'' +
             ", lastName='" + lastName + '\'' +
             ", cardNumber='" + cardNumber + '\'' +
@@ -277,7 +300,7 @@ public class Member {
             ", passportNumber='" + passportNumber + '\'' +
             ", identityCard='" + identityCard + '\'' +
             ", oib='" + oib + '\'' +
-            ", membership=" + membership +
+            ", membershipId=" + membershipId +
             ", isDeleted=" + isDeleted +
             '}';
     }

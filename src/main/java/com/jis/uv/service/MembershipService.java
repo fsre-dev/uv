@@ -43,8 +43,9 @@ public class MembershipService {
             Membership deletedMembership = membership.get();
             deletedMembership.setIsDeleted(true);
             membershipRepository.save(deletedMembership);
+        } else {
+            throw new Exception("Membership does not exist");
         }
-        throw new Exception("Membership does not exist");
     }
 
     public List<Membership> findAll(Pageable pageRequest) {
