@@ -14,15 +14,19 @@ import java.util.Optional;
 public class MembershipService {
     private MembershipRepository membershipRepository;
     private MembershipValidator membershipValidator;
+    private MembershipAuditService membershipAuditService;
 
     @Autowired
-    public MembershipService(MembershipRepository membershipRepository, MembershipValidator membershipValidator) {
+    public MembershipService(MembershipRepository membershipRepository, MembershipValidator membershipValidator,
+                             MembershipAuditService membershipAuditService) {
         this.membershipRepository = membershipRepository;
         this.membershipValidator = membershipValidator;
+        this.membershipAuditService = membershipAuditService;
     }
 
     public Membership create(Membership membership) throws Exception {
         if (membershipValidator.validate(membership)) {
+            membershipAuditService.createAudit(membership);
             return membershipRepository.save(membership);
         }
         throw new Exception("Invalid membership");
@@ -32,6 +36,7 @@ public class MembershipService {
         Optional<Membership> existingMembership = this.findById(id);
         if (membershipValidator.validate(membership) && existingMembership.isPresent()) {
             membership.setId(id);
+            membershipAuditService.updateAudit(membership);
             return membershipRepository.save(membership);
         }
         throw new Exception("Could not update membership");
@@ -42,6 +47,7 @@ public class MembershipService {
         if (membership.isPresent()) {
             Membership deletedMembership = membership.get();
             deletedMembership.setIsDeleted(true);
+            membershipAuditService.deleteAudit(deletedMembership);
             membershipRepository.save(deletedMembership);
         } else {
             throw new Exception("Membership does not exist");

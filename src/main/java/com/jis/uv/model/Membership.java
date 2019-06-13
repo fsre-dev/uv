@@ -3,17 +3,20 @@ package com.jis.uv.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.sql.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.sql.Date;
 
 @Entity
 @Table(name = "membership")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Membership {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,7 +34,7 @@ public class Membership {
     @Column(name = "price", nullable = false)
     private Double price;
 
-    @Column(name = "is_deleted", nullable = false)
+    @Column(name = "is_deleted")
     private Boolean isDeleted;
 
     @OneToOne(mappedBy = "membership")
