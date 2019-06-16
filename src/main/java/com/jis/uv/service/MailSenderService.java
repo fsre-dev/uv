@@ -46,10 +46,10 @@ public class MailSenderService {
 
     private Boolean isMembershipExpiring(Date membershipExpirationDate) {
         Date today = new java.sql.Date(new Date().getTime());
-        int days = Days.daysBetween(
+        int daysBeforeExpiration = Days.daysBetween(
                 new LocalDate(membershipExpirationDate.getTime()),
                 new LocalDate(today.getTime())).getDays();
 
-        return Math.abs(days) <= 14;
+        return Math.abs(daysBeforeExpiration) <= 14;
     }
 }
