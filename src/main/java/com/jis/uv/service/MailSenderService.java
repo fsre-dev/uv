@@ -2,6 +2,8 @@ package com.jis.uv.service;
 
 import com.jis.uv.model.Member;
 import com.jis.uv.model.Membership;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -43,8 +45,11 @@ public class MailSenderService {
     }
 
     private Boolean isMembershipExpiring(Date membershipExpirationDate) {
-        long diff = membershipExpirationDate.getTime() - (new java.util.Date().getTime());
+        Date today = new java.sql.Date(new Date().getTime());
+        int days = Days.daysBetween(
+                new LocalDate(membershipExpirationDate.getTime()),
+                new LocalDate(today.getTime())).getDays();
 
-        return diff <= 14;
+        return Math.abs(days) <= 14;
     }
 }
