@@ -27,21 +27,21 @@ public class MembershipAuditService {
 
     MembershipAudit createAudit(Membership membership) {
         MembershipAudit membershipAudit = new MembershipAudit(membership.getMemberFrom(),
-                membership.getMemberTo(), membership.getPrice(), membership.getMember(), ActionEnum.ADD);
+                membership.getMemberTo(), membership.getPrice(), ActionEnum.ADD, false);
 
         return membershipAuditRepository.saveAndFlush(membershipAudit);
     }
 
     MembershipAudit updateAudit(Membership membership) {
         MembershipAudit membershipAudit = new MembershipAudit(membership.getMemberFrom(),
-                membership.getMemberTo(), membership.getPrice(), membership.getMember(), ActionEnum.UPD);
+                membership.getMemberTo(), membership.getPrice(), ActionEnum.UPD, false);
 
         return membershipAuditRepository.saveAndFlush(membershipAudit);
     }
 
     MembershipAudit deleteAudit(Membership membership) {
         MembershipAudit membershipAudit = new MembershipAudit(membership.getMemberFrom(),
-                membership.getMemberTo(), membership.getPrice(), membership.getMember(), ActionEnum.TERM);
+                membership.getMemberTo(), membership.getPrice(), ActionEnum.TERM, true);
 
         return membershipAuditRepository.saveAndFlush(membershipAudit);
     }

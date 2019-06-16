@@ -45,11 +45,10 @@ public class Membership {
 
     }
 
-    public Membership(Date memberFrom, Date memberTo, Double price, Member member) {
+    public Membership(Date memberFrom, Date memberTo, Double price) {
         this.memberFrom = memberFrom;
         this.memberTo = memberTo;
         this.price = price;
-        this.member = member;
     }
 
     public Long getId() {
@@ -58,14 +57,6 @@ public class Membership {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Boolean getDeleted() {
-        return isDeleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        isDeleted = deleted;
     }
 
     public Date getMemberFrom() {
@@ -98,13 +89,5 @@ public class Membership {
 
     public void setIsDeleted(Boolean isDeleted) {
         this.isDeleted = isDeleted;
-    }
-
-    public Member getMember() {
-        return member;
-    }
-
-    public void setMember(Member member) {
-        this.member = member;
     }
 }

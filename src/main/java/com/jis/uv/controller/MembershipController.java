@@ -28,6 +28,33 @@ public class MembershipController {
         this.membershipService = membershipService;
     }
 
+    @GetMapping
+    public ResponseEntity<List<Membership>> findAll(@RequestParam Integer page, @RequestParam Integer size) {
+        List<Membership> memberships = membershipService.findAll(PageRequest.of(page, size));
+        if (memberships.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(memberships);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Membership> findById(@PathVariable Long id) {
+        Optional<Membership> existingMembership = membershipService.findById(id);
+        if (existingMembership.isPresent()) {
+            return ResponseEntity.ok(existingMembership.get());
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping(value = "/deleted")
+    public ResponseEntity<List<Membership>> findAllDeleted(@RequestParam Integer page, @RequestParam Integer size) {
+        List<Membership> memberships = membershipService.findAllDeleted(PageRequest.of(page, size));
+        if (memberships.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(memberships);
+    }
+
     @PostMapping
     public ResponseEntity<Membership> create(@RequestBody Membership membership) {
         try {
@@ -59,32 +86,5 @@ public class MembershipController {
             e.getMessage();
             return ResponseEntity.notFound().build();
         }
-    }
-
-    @GetMapping
-    public ResponseEntity<List<Membership>> findAll(@RequestParam Integer page, @RequestParam Integer size) {
-        List<Membership> memberships = membershipService.findAll(PageRequest.of(page, size));
-        if (memberships.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(memberships);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Membership> findById(@PathVariable Long id) {
-        Optional<Membership> existingMembership = membershipService.findById(id);
-        if (existingMembership.isPresent()) {
-            return ResponseEntity.ok(existingMembership.get());
-        }
-        return ResponseEntity.notFound().build();
-    }
-
-    @GetMapping(value = "/deleted")
-    public ResponseEntity<List<Membership>> findAllDeleted(@RequestParam Integer page, @RequestParam Integer size) {
-        List<Membership> memberships = membershipService.findAllDeleted(PageRequest.of(page, size));
-        if (memberships.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(memberships);
     }
 }

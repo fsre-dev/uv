@@ -21,10 +21,14 @@ public class MembershipAudit extends Membership {
     @Basic
     private Date updatedAt;
 
-    public MembershipAudit(Date memberFrom, Date memberTo, Double price, Member member, ActionEnum action) {
-        super(memberFrom, memberTo, price, member);
+    public MembershipAudit() {
+    }
+
+    public MembershipAudit(Date memberFrom, Date memberTo, Double price, ActionEnum action, Boolean isDeleted) {
+        super(memberFrom, memberTo, price);
         this.action = action;
         updatedAt = new Date(new java.util.Date().getTime());
+        setIsDeleted(isDeleted);
     }
 
     public ActionEnum getAction() {
