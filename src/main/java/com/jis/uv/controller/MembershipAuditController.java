@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.awt.print.Pageable;
 import java.util.List;
 
 @RestController
@@ -24,7 +23,7 @@ public class MembershipAuditController {
     @GetMapping
     public ResponseEntity<List<MembershipAudit>> findAll(@RequestParam Integer page, @RequestParam Integer size) {
         List<MembershipAudit> audits = membershipAuditService.findAll(PageRequest.of(page, size));
-        if(audits.isEmpty()) {
+        if (audits.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(audits);
