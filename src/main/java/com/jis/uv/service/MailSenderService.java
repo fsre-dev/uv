@@ -4,6 +4,8 @@ import com.jis.uv.model.Member;
 import com.jis.uv.model.Membership;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -15,6 +17,8 @@ import java.util.List;
 
 @Service
 public class MailSenderService {
+    private final Logger logger = LoggerFactory.getLogger(MailSenderService.class);
+
     private JavaMailSender javaMailSender;
     private MemberService memberService;
 
@@ -25,12 +29,13 @@ public class MailSenderService {
     }
 
     @Scheduled(cron = "0 0 0 * * *")
-    public void findExpiredMembership() {
+    public void notifyForExpiringMembership() {
         List<Member> members = memberService.findAll();
         for (Member member : members) {
             Membership membership = member.getMembership();
             if (isMembershipExpiring(membership.getMemberTo())) {
                 sendMessage(member);
+                logger.info("E-mail sent successfully");
             }
         }
     }
