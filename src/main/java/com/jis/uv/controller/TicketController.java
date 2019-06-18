@@ -2,6 +2,8 @@ package com.jis.uv.controller;
 
 import com.jis.uv.model.Ticket;
 import com.jis.uv.service.TicketService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,8 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/ticket")
 public class TicketController {
+    private final Logger logger = LoggerFactory.getLogger(TicketController.class);
+
     private final TicketService ticketService;
 
     @Autowired
@@ -32,9 +36,11 @@ public class TicketController {
     public ResponseEntity<Ticket> create(@RequestBody Ticket ticket) {
         try {
             Ticket insertedTicket = ticketService.create(ticket);
+            logger.info("Ticket successfully created");
             return ResponseEntity.ok(insertedTicket);
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("Unable to create ticket {}", ticket.toString());
             return ResponseEntity.badRequest().build();
         }
     }
@@ -43,9 +49,11 @@ public class TicketController {
     public ResponseEntity<Ticket> update(@RequestBody Ticket ticket, @PathVariable Long id) {
         try {
             Ticket updatedTicket = ticketService.update(ticket, id);
+            logger.info("Ticket successfully updated");
             return ResponseEntity.ok(updatedTicket);
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("Unable to update ticket with id {}", id.toString());
             return ResponseEntity.notFound().build();
         }
     }
@@ -54,9 +62,11 @@ public class TicketController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         try {
             ticketService.delete(id);
+            logger.info("Ticket successfully deleted");
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("Unable to delete ticket with id {}", id.toString());
             return ResponseEntity.notFound().build();
         }
     }
@@ -64,27 +74,33 @@ public class TicketController {
     @GetMapping
     public ResponseEntity<List<Ticket>> findAll(@RequestParam Integer page, @RequestParam Integer size) {
         List<Ticket> tickets = ticketService.findAll(PageRequest.of(page, size));
-        if (tickets.isEmpty()) {
-            return ResponseEntity.notFound().build();
+        if (!tickets.isEmpty()) {
+            logger.info("Successfully found all tickets");
+            return ResponseEntity.ok(tickets);
         }
-        return ResponseEntity.ok(tickets);
+        logger.error("Unable to find tickets");
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Ticket> findById(@PathVariable("id") Long id) {
         Optional<Ticket> existingTicket = ticketService.findById(id);
         if (existingTicket.isPresent()) {
+            logger.info("Found ticket with id {}", id.toString());
             return ResponseEntity.ok(existingTicket.get());
         }
+        logger.error("Unable to find ticket with id {}", id.toString());
         return ResponseEntity.notFound().build();
     }
 
     @GetMapping(value = "/deleted")
     public ResponseEntity<List<Ticket>> findAllDeleted(@RequestParam Integer page, @RequestParam Integer size) {
         List<Ticket> tickets = ticketService.findAllDeleted(PageRequest.of(page, size));
-        if (tickets.isEmpty()) {
-            return ResponseEntity.notFound().build();
+        if (!tickets.isEmpty()) {
+            logger.info("Successfully found all deleted tickets");
+            return ResponseEntity.ok(tickets);
         }
-        return ResponseEntity.ok(tickets);
+        logger.error("Unable to find deleted tickets");
+        return ResponseEntity.notFound().build();
     }
 }

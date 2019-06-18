@@ -30,31 +30,38 @@ public class MailSenderService {
 
     @Scheduled(cron = "0 0 0 * * *")
     public void notifyForExpiringMembership() {
+        int daysBeforeExpiration;
+        String messageText;
         List<Member> members = memberService.findAll();
         for (Member member : members) {
             Membership membership = member.getMembership();
-            if (isMembershipExpiring(membership.getMemberTo())) {
-                sendMessage(member);
+            daysBeforeExpiration = calculateDaysBeforeExpiration(membership.getMemberTo());
+            if (daysBeforeExpiration == 14) {
+                messageText = "Your membership is expiring in 14 days";
+                sendMessage(member, messageText);
+                logger.info("E-mail sent successfully");
+            } else if (daysBeforeExpiration == -1) {
+                messageText = "Your membership has expired";
+                sendMessage(member, messageText);
                 logger.info("E-mail sent successfully");
             }
         }
     }
 
-    private void sendMessage(Member member) {
+    private void sendMessage(Member member, String messageText) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(member.getEmail());
         message.setSubject("Membership");
-        message.setText("Your membership is going to expire in 14 days !");
+        message.setText(messageText);
 
         javaMailSender.send(message);
     }
 
-    private Boolean isMembershipExpiring(Date membershipExpirationDate) {
+    private Integer calculateDaysBeforeExpiration(Date membershipExpirationDate) {
         Date today = new java.sql.Date(new Date().getTime());
-        int daysBeforeExpiration = Days.daysBetween(
-                new LocalDate(membershipExpirationDate.getTime()),
-                new LocalDate(today.getTime())).getDays();
 
-        return Math.abs(daysBeforeExpiration) <= 14;
+        return Days.daysBetween(
+                new LocalDate(today.getTime()),
+                new LocalDate(membershipExpirationDate.getTime())).getDays();
     }
 }

@@ -20,11 +20,6 @@ public class MembershipAuditService {
         this.membershipAuditRepository = membershipAuditRepository;
     }
 
-    public List<MembershipAudit> findAll(Pageable pageRequest) {
-        Page<MembershipAudit> membershipAudits = membershipAuditRepository.findAll(pageRequest);
-        return membershipAudits.getContent();
-    }
-
     MembershipAudit createAudit(Membership membership) {
         MembershipAudit membershipAudit = new MembershipAudit(membership.getMemberFrom(),
                 membership.getMemberTo(), membership.getPrice(), ActionEnum.ADD, false);
@@ -44,5 +39,25 @@ public class MembershipAuditService {
                 membership.getMemberTo(), membership.getPrice(), ActionEnum.TERM, true);
 
         return membershipAuditRepository.saveAndFlush(membershipAudit);
+    }
+
+    public List<MembershipAudit> findAll(Pageable pageRequest) {
+        Page<MembershipAudit> membershipAudits = membershipAuditRepository.findAll(pageRequest);
+        return membershipAudits.getContent();
+    }
+
+    public List<MembershipAudit> findAllCreated(Pageable pageRequest) {
+        Page<MembershipAudit> membershipAudits = membershipAuditRepository.findAllByAction(ActionEnum.ADD, pageRequest);
+        return membershipAudits.getContent();
+    }
+
+    public List<MembershipAudit> findAllUpdated(Pageable pageRequest) {
+        Page<MembershipAudit> membershipAudits = membershipAuditRepository.findAllByAction(ActionEnum.UPD, pageRequest);
+        return membershipAudits.getContent();
+    }
+
+    public List<MembershipAudit> findAllTerminated(Pageable pageRequest) {
+        Page<MembershipAudit> membershipAudits = membershipAuditRepository.findAllByAction(ActionEnum.TERM, pageRequest);
+        return membershipAudits.getContent();
     }
 }
