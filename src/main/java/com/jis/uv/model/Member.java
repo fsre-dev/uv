@@ -76,7 +76,7 @@ public class Member {
     @JoinColumn(name = "membership_id", nullable = false)
     private Membership membership;
 
-    @Column(name = "isdeleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
     public Member() {

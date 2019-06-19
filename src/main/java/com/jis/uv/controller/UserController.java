@@ -10,6 +10,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/user")
@@ -32,7 +37,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/all")
-    ResponseEntity<List<User>> findAll() {
+    public ResponseEntity<List<User>> findAll() {
         List<User> users = userService.findAll();
         if (users.isEmpty() || users == null) {
             logger.info("List of users not found");
@@ -43,7 +48,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/all", params = {"page", "size"})
-    ResponseEntity<Page<User>> findAll(@RequestParam("page") Integer page, @RequestParam("size") Integer size) {
+    public ResponseEntity<Page<User>> findAll(@RequestParam("page") Integer page, @RequestParam("size") Integer size) {
         Page<User> users = userService.findAll(PageRequest.of(page, size));
         if (users.isEmpty() || users == null) {
             logger.info("List of users not found");
@@ -54,7 +59,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/role", params = {"page", "size", "value"})
-    ResponseEntity<Page<User>> findAllByRole(@RequestParam("value") RoleEnum role, @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
+    public ResponseEntity<Page<User>> findAllByRole(@RequestParam("value") RoleEnum role, @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
         Page<User> users = userService.findAllByRole(role, PageRequest.of(page, size));
         if (users.isEmpty() || users == null) {
             logger.info("List of users with role {} not found", role);
@@ -65,7 +70,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<User> findById(@PathVariable(value = "id") Long id) {
+    public ResponseEntity<User> findById(@PathVariable(value = "id") Long id) {
         User user = userService.findById(id);
         if (user == null) {
             logger.info("User with id {} not found", id);
@@ -76,7 +81,7 @@ public class UserController {
     }
 
     @GetMapping(params = {"email"})
-    ResponseEntity<User> findByEMail(@RequestParam("email") String eMail) {
+    public ResponseEntity<User> findByEMail(@RequestParam("email") String eMail) {
         User user = userService.findByEMail(eMail);
         if (user == null) {
             logger.info("User with email {} not found", eMail);
@@ -86,32 +91,81 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PostMapping
-    ResponseEntity<User> createUser(@RequestBody User user) {
+    @PostMapping("/superadmin/create")
+    public ResponseEntity<User> createUser(@RequestBody User user) {
         User createdUser = userService.findByUsername(user.getUsername());
-        if (createdUser == null) {
-            logger.info("Unable to find user {} :", user.getUsername());
-            return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+        if (createdUser != null) {
+            logger.info("Username already exists: {}", user.getUsername());
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        if (!userService.validateUser(user)) {
+            logger.info("User credentials invalid, unable to create user {} :", user.getUsername());
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
         createdUser = userService.createUser(user);
         logger.info("User created: {}", user);
         return new ResponseEntity<>(createdUser, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
-    ResponseEntity<User> updateUser(@RequestBody User user, @PathVariable(value = "id") Long id) {
+    @PutMapping("/superadmin/{id}")
+    public ResponseEntity<User> updateUser(@RequestBody User user, @PathVariable(value = "id") Long id) {
         User updatedUser = userService.findById(id);
         if (updatedUser == null) {
             logger.info("Unable to find user with id {} :", id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        if (!userService.validateUser(user)) {
+            logger.info("User credentials invalid, unable to update user with id {} :", id);
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
         updatedUser = userService.updateUser(user, id);
         logger.info("User updated: {}", updatedUser);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
-    @PutMapping(value = "/delete/{id}")
-    private ResponseEntity<User> deleteUser(@PathVariable(value = "id") Long id) {
+    @PostMapping("/authenticate")
+    public ResponseEntity<User> loginUser(HttpServletRequest request, @RequestBody User user) {
+        User loggedUser = userService.login(user, request);
+        if (loggedUser == null) {
+            logger.info("Unable to find a User with username {} ", loggedUser.getUsername());
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        logger.debug("User with {} username has loged in", loggedUser.getUsername());
+
+        return new ResponseEntity<>(loggedUser, HttpStatus.OK);
+    }
+
+    @PutMapping("/changePassword/{id}")
+    public ResponseEntity<User> changeUserPassword(@RequestBody User user, @PathVariable(value = "id") Long id) {
+        User updatedUser = userService.findById(id);
+        Authentication logedUser = SecurityContextHolder.getContext().getAuthentication();
+        if (updatedUser == null) {
+            logger.info("Unable to find user with id {} :", id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        if (logedUser instanceof AnonymousAuthenticationToken) {
+            logger.error("Unable to change password, you are not loged on this machine");
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        if (logedUser instanceof UsernamePasswordAuthenticationToken) {
+            org.springframework.security.core.userdetails.User logedUserDetails = ((org.springframework.security.core.userdetails.User) logedUser.getPrincipal());
+            if (!logedUserDetails.getUsername().equals(updatedUser.getUsername())) {
+                logger.error("Unable to change password, you are not loged as that user on this machine");
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
+        }
+        try {
+            updatedUser.setPassword(user.getPassword());
+            userService.updateUserPassword(updatedUser, id);
+            logger.info("User has {} changed password", updatedUser.getUsername());
+        } catch (Exception e) {
+            logger.error("Can't change invalid password for user {}", updatedUser.getUsername());
+        }
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/superadmin/delete/{id}")
+    public ResponseEntity<User> deleteUser(@PathVariable(value = "id") Long id) {
         User deletedUser = userService.findById(id);
         if (deletedUser == null) {
             logger.info("Unable to find user with id {} :", id);
@@ -122,8 +176,8 @@ public class UserController {
         return new ResponseEntity<>(deletedUser, HttpStatus.ACCEPTED);
     }
 
-    @DeleteMapping(value = "/deletePermanently/{id}")
-    private ResponseEntity<Void> deleteUserPermanently(@PathVariable(value = "id") Long id) {
+    @DeleteMapping(value = "/superadmin/deletePermanently/{id}")
+    public ResponseEntity<Void> deleteUserPermanently(@PathVariable(value = "id") Long id) {
         User deletedUser = userService.findById(id);
         if (deletedUser == null) {
             logger.info("Unable to find user with id {} :", id);

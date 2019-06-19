@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,16 +38,16 @@ public class MemberController {
     private MemberService memberService;
 
     @GetMapping(value = "/all")
-    private ResponseEntity<List<Member>> findAll() {
+    public ResponseEntity<List<Member>> findAll() {
         List<Member> members = memberService.findAll();
-        if (members.isEmpty() || members == null) {
+        if (members == null || members.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(members, HttpStatus.OK);
     }
 
     @GetMapping(value = "/all", params = {"page", "size"})
-    private ResponseEntity<Page<Member>> findAllDynamic(@And({
+    public ResponseEntity<Page<Member>> findAllDynamic(@And({
         @Spec(path = "firstName", spec = Equal.class),
         @Spec(path = "lastName", spec = Equal.class),
         @Spec(path = "memberType", spec = Equal.class),
@@ -68,7 +69,7 @@ public class MemberController {
     }
 
     @GetMapping(value = "/firstname", params = {"page", "size", "value"})
-    private ResponseEntity<Page<Member>> findAllByFirstName(@RequestParam("value") String firstName, @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
+    public ResponseEntity<Page<Member>> findAllByFirstName(@RequestParam("value") String firstName, @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
         Page<Member> members = memberService.findAllByFirstName(firstName, PageRequest.of(page, size));
         if (members.isEmpty() || members == null) {
             logger.info("List of members with first name {} is empty", firstName);
@@ -79,7 +80,7 @@ public class MemberController {
     }
 
     @GetMapping(value = "/lastname", params = {"page", "size", "value"})
-    private ResponseEntity<Page<Member>> findAllByLastName(@RequestParam("value") String lastName, @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
+    public ResponseEntity<Page<Member>> findAllByLastName(@RequestParam("value") String lastName, @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
         Page<Member> members = memberService.findAllByLastName(lastName, PageRequest.of(page, size));
         if (members.isEmpty() || members == null) {
             logger.info("List of members with last name {} is empty", lastName);
@@ -90,7 +91,7 @@ public class MemberController {
     }
 
     @GetMapping(value = "/phonenumber", params = {"page", "size", "value"})
-    private ResponseEntity<Page<Member>> findAllByPhoneNumber(@RequestParam("value") String phoneNumber, @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
+    public ResponseEntity<Page<Member>> findAllByPhoneNumber(@RequestParam("value") String phoneNumber, @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
         Page<Member> members = memberService.findAllByPhoneNumber(phoneNumber, PageRequest.of(page, size));
         if (members.isEmpty() || members == null) {
             logger.info("List of members with phone number {} is empty", phoneNumber);
@@ -101,7 +102,7 @@ public class MemberController {
     }
 
     @GetMapping(value = "/gender", params = {"page", "size", "value"})
-    private ResponseEntity<Page<Member>> findAllByGender(@RequestParam("value") Gender gender, @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
+    public ResponseEntity<Page<Member>> findAllByGender(@RequestParam("value") Gender gender, @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
         Page<Member> members = memberService.findAllByGender(gender, PageRequest.of(page, size));
         if (members.isEmpty() || members == null) {
             logger.info("List of members with gender {} is empty", gender);
@@ -112,7 +113,7 @@ public class MemberController {
     }
 
     @GetMapping(value = "/membertype", params = {"page", "size", "value"})
-    private ResponseEntity<Page<Member>> findAllByMemberType(@RequestParam("value") MemberTypeEnum memberType, @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
+    public ResponseEntity<Page<Member>> findAllByMemberType(@RequestParam("value") MemberTypeEnum memberType, @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
         Page<Member> members = memberService.findAllByMemberType(memberType, PageRequest.of(page, size));
         if (members.isEmpty() || members == null) {
             logger.info("List of members with member type {} is empty", memberType);
@@ -123,7 +124,7 @@ public class MemberController {
     }
 
     @GetMapping(value = "/address", params = {"page", "size", "value"})
-    private ResponseEntity<Page<Member>> findAllByAddress(@RequestParam("value") String address, @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
+    public ResponseEntity<Page<Member>> findAllByAddress(@RequestParam("value") String address, @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
         Page<Member> members = memberService.findAllByAddress(address, PageRequest.of(page, size));
         if (members.isEmpty() || members == null) {
             logger.info("List of members with address {} is empty", address);
@@ -134,7 +135,7 @@ public class MemberController {
     }
 
     @GetMapping(value = "/city", params = {"page", "size", "value"})
-    private ResponseEntity<Page<Member>> findAllByCity(@RequestParam("value") String city, @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
+    public ResponseEntity<Page<Member>> findAllByCity(@RequestParam("value") String city, @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
         Page<Member> members = memberService.findAllByCity(city, PageRequest.of(page, size));
         if (members.isEmpty() || members == null) {
             logger.info("List of members with city {} is empty", city);
@@ -145,7 +146,7 @@ public class MemberController {
     }
 
     @GetMapping(value = "/state", params = {"page", "size", "value"})
-    private ResponseEntity<Page<Member>> findAllByState(@RequestParam("value") String state, @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
+    public ResponseEntity<Page<Member>> findAllByState(@RequestParam("value") String state, @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
         Page<Member> members = memberService.findAllByState(state, PageRequest.of(page, size));
         if (members.isEmpty() || members == null) {
             logger.info("List of members with state {} is empty", state);
@@ -156,7 +157,7 @@ public class MemberController {
     }
 
     @GetMapping(value = "/cellnumber", params = {"page", "size", "value"})
-    private ResponseEntity<Page<Member>> findAllByCellNumber(@RequestParam("value") String cellNumber, @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
+    public ResponseEntity<Page<Member>> findAllByCellNumber(@RequestParam("value") String cellNumber, @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
         Page<Member> members = memberService.findAllByCellNumber(cellNumber, PageRequest.of(page, size));
         if (members.isEmpty() || members == null) {
             logger.info("List of members with cell number {} is empty", cellNumber);
@@ -167,7 +168,7 @@ public class MemberController {
     }
 
     @GetMapping(params = {"id"})
-    private ResponseEntity<Member> findById(@RequestParam("id") Long id) {
+    public ResponseEntity<Member> findById(@RequestParam("id") Long id) {
         Member member = memberService.findById(id);
         if (member == null) {
             logger.info("Member with id {} not found", id);
@@ -178,7 +179,7 @@ public class MemberController {
     }
 
     @GetMapping(params = {"email"})
-    private ResponseEntity<Member> findByEmail(@RequestParam("email") String eMail) {
+    public ResponseEntity<Member> findByEmail(@RequestParam("email") String eMail) {
         Member member = memberService.findByEmail(eMail);
         if (member == null) {
             logger.info("Member with email {} not found", eMail);
@@ -189,7 +190,7 @@ public class MemberController {
     }
 
     @GetMapping(params = {"oib"})
-    private ResponseEntity<Member> findByOib(@RequestParam("oib") String oib) {
+    public ResponseEntity<Member> findByOib(@RequestParam("oib") String oib) {
         Member member = memberService.findByOib(oib);
         if (member == null) {
             logger.info("Member with oib {} not found", oib);
@@ -200,7 +201,7 @@ public class MemberController {
     }
 
     @GetMapping(params = {"passportnumber"})
-    private ResponseEntity<Member> findByPassportNumber(@RequestParam("passportnumber") String passportNumber) {
+    public ResponseEntity<Member> findByPassportNumber(@RequestParam("passportnumber") String passportNumber) {
         Member member = memberService.findByPassportNumber(passportNumber);
         if (member == null) {
             logger.info("Member with passportNumber {} not found", passportNumber);
@@ -211,7 +212,7 @@ public class MemberController {
     }
 
     @GetMapping(params = {"cardnumber"})
-    private ResponseEntity<Member> findByCardNumber(@RequestParam("cardnumber") String cardNumber) {
+    public ResponseEntity<Member> findByCardNumber(@RequestParam("cardnumber") String cardNumber) {
         Member member = memberService.findByCardNumber(cardNumber);
         if (member == null) {
             logger.info("Member with cardNumber {} not found", cardNumber);
@@ -222,7 +223,7 @@ public class MemberController {
     }
 
     @GetMapping(params = {"identitycard"})
-    private ResponseEntity<Member> findByIdentityCard(@RequestParam("identitycard") String identityCard) {
+    public ResponseEntity<Member> findByIdentityCard(@RequestParam("identitycard") String identityCard) {
         Member member = memberService.findByIdentityCard(identityCard);
         if (member == null) {
             logger.info("Member with identityCard {} not found", identityCard);
@@ -233,7 +234,8 @@ public class MemberController {
     }
 
     @PostMapping
-    private ResponseEntity<Member> createMember(@RequestBody Member member) {
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public ResponseEntity<Member> createMember(@RequestBody Member member) {
         if (memberService.validateMember(member)) {
             logger.error("Unable to create member {}", member.toString());
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
@@ -245,7 +247,8 @@ public class MemberController {
     }
 
     @PutMapping(value = "/{id}")
-    private ResponseEntity<Member> updateMember(@RequestBody Member member, @PathVariable(value = "id") Long id) {
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public ResponseEntity<Member> updateMember(@RequestBody Member member, @PathVariable(value = "id") Long id) {
         Member updatedMember = memberService.findById(id);
         if (updatedMember == null) {
             logger.info("Unable to find member with {}", id);
@@ -255,7 +258,7 @@ public class MemberController {
             logger.error("Unable to update member with id {}", id);
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        if(updatedMember.equals(member)){
+        if (updatedMember.equals(member)) {
             logger.info("No changes were made for member with id {}", id);
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
@@ -265,7 +268,8 @@ public class MemberController {
     }
 
     @PutMapping(value = "/delete/{id}")
-    private ResponseEntity<Member> deleteMember(@PathVariable(value = "id") Long id) {
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public ResponseEntity<Member> deleteMember(@PathVariable(value = "id") Long id) {
         Member deletedMember = memberService.findById(id);
         if (deletedMember == null) {
             logger.info("Unable to find member with {}", id);
@@ -285,7 +289,8 @@ public class MemberController {
     }
 
     @DeleteMapping(value = "/deletePermanently/{id}")
-    private ResponseEntity<Void> deleteMemberPermanently(@PathVariable(value = "id") Long id) {
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public ResponseEntity<Void> deleteMemberPermanently(@PathVariable(value = "id") Long id) {
         Member deletedMember = memberService.findById(id);
         if (deletedMember == null) {
             logger.info("Unable to find member with {}", id);

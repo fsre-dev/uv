@@ -8,7 +8,6 @@ import com.jis.uv.model.enums.Gender;
 import com.jis.uv.model.enums.MemberTypeEnum;
 import com.jis.uv.repository.MemberAuditRepository;
 import com.jis.uv.repository.MemberRepository;
-import com.jis.uv.repository.MembershipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +30,10 @@ public class MemberService {
 
     @Autowired
     private MembershipService membershipService;
+
+    @Autowired
+    private MembershipAuditService membershipAuditService;
+
 
     private final String emailDomainRegex = "^[\\w-\\+]+(\\.[\\w]+)*@[\\w-]+(\\.[\\w]+)*(\\.[a-z]{2,})$";
     private final String onlyDigitsRegex = "^[0-9]*$";
@@ -118,6 +121,7 @@ public class MemberService {
         createdMemberAudit.setAction(ActionEnum.ADD);
 
         memberAuditRepository.saveAndFlush(createdMemberAudit);
+        membershipAuditService.createAudit(createdMember.getMembership());
         return createdMember;
     }
 
