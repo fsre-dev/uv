@@ -130,7 +130,6 @@ public class MemberService {
         member.setId(id);
         Member updatedMember = memberRepository.save(member);
 
-
         MemberAudit updatedMemberAudit = new MemberAudit(updatedMember);
         updatedMemberAudit.setAction(ActionEnum.UPD);
 

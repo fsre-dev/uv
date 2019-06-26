@@ -262,7 +262,9 @@ public class MemberController {
             logger.info("No changes were made for member with id {}", id);
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+        member.setMembership(updatedMember.getMembership());
         updatedMember = memberService.updateMember(member, id);
+
         logger.info("Member updated: {}", member.toString());
         return new ResponseEntity<>(updatedMember, HttpStatus.ACCEPTED);
     }

@@ -3,6 +3,8 @@ package com.jis.uv.model;
 import com.jis.uv.model.enums.ActionEnum;
 import com.jis.uv.model.enums.Gender;
 import com.jis.uv.model.enums.MemberTypeEnum;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 
 import java.sql.Date;
 import javax.persistence.Column;
@@ -82,6 +84,9 @@ public class MemberAudit {
     @Column(name = "membership_id")
     private Long membershipId;
 
+    @Column(name = "action_by")
+    private String actionBy;
+
     @Column(name = "isdeleted")
     private Boolean isDeleted;
 
@@ -108,6 +113,7 @@ public class MemberAudit {
         this.oib = member.getOib();
         this.identityCard = member.getIdentityCard();
         this.isDeleted = member.getDeleted();
+        this.actionBy = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
     }
 
     public Long getRevId() {

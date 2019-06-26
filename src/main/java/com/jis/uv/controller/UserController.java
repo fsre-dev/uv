@@ -119,7 +119,7 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
         updatedUser = userService.updateUser(user, id);
-        logger.info("User updated: {}", updatedUser);
+        logger.info("User updated: {}", updatedUser.getUsername());
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
@@ -130,7 +130,7 @@ public class UserController {
             logger.info("Unable to find a User with username {} ", loggedUser.getUsername());
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        logger.debug("User with {} username has loged in", loggedUser.getUsername());
+        logger.info("User with {} username has loged in", loggedUser.getUsername());
 
         return new ResponseEntity<>(loggedUser, HttpStatus.OK);
     }

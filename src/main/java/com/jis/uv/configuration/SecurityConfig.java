@@ -71,7 +71,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/member/audit/*").hasAnyRole("SUPER_ADMIN,ADMIN")
             .anyRequest().hasAnyRole("NORMAL", "VIEWER", "ADMIN", "SUPER_ADMIN")
             .and()
-            .formLogin().disable()
+            .formLogin().and()
             .logout().permitAll().logoutSuccessHandler((new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK)))
             .and()
             .csrf().disable();
