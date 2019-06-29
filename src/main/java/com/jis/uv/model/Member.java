@@ -1,9 +1,12 @@
 package com.jis.uv.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jis.uv.model.enums.Gender;
 import com.jis.uv.model.enums.MemberTypeEnum;
 
 import java.sql.Date;
+import java.util.Objects;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +16,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 
 @Entity
@@ -78,6 +82,10 @@ public class Member {
 
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
+
+    @ManyToMany(mappedBy = "members", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Document> documents;
 
     public Member() {
     }
@@ -255,6 +263,43 @@ public class Member {
 
     public void setDeleted(Boolean deleted) {
         isDeleted = deleted;
+    }
+
+    public Set<Document> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(Set<Document> documents) {
+        this.documents = documents;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Member)) {
+            return false;
+        }
+        Member member = (Member) o;
+        return
+            Objects.equals(firstName, member.firstName) &&
+                Objects.equals(lastName, member.lastName) &&
+                Objects.equals(cardNumber, member.cardNumber) &&
+                memberType == member.memberType &&
+                gender == member.gender &&
+                Objects.equals(address, member.address) &&
+                Objects.equals(zip, member.zip) &&
+                Objects.equals(city, member.city) &&
+                Objects.equals(state, member.state) &&
+                Objects.equals(phoneNumber, member.phoneNumber) &&
+                Objects.equals(cellNumber, member.cellNumber) &&
+                Objects.equals(email, member.email) &&
+                Objects.equals(birthDate.toLocalDate(), member.birthDate.toLocalDate()) &&
+                Objects.equals(passportNumber, member.passportNumber) &&
+                Objects.equals(identityCard, member.identityCard) &&
+                Objects.equals(oib, member.oib) &&
+                Objects.equals(isDeleted, member.isDeleted);
     }
 
     @Override

@@ -138,7 +138,11 @@ public class MemberService {
     }
 
     @Transactional
-    public Member deleteMember(Member member) throws Exception {
+    public Member deleteMember(Long id) throws Exception {
+        Member member = memberRepository.findById(id).orElse(null);
+        if (member == null) {
+            throw new Exception("Can't delete. Member does not exist");
+        }
         member.setDeleted(true);
         Member terminatedMember = memberRepository.save(member);
 

@@ -236,7 +236,7 @@ public class MemberController {
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     public ResponseEntity<Member> createMember(@RequestBody Member member) {
-        if (memberService.validateMember(member)) {
+        if (!memberService.validateMember(member)) {
             logger.error("Unable to create member {}", member.toString());
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
@@ -263,6 +263,8 @@ public class MemberController {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         member.setMembership(updatedMember.getMembership());
+        member.setDocuments(updatedMember.getDocuments());
+
         updatedMember = memberService.updateMember(member, id);
 
         logger.info("Member updated: {}", member.toString());
@@ -278,7 +280,7 @@ public class MemberController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         try {
-            deletedMember = memberService.deleteMember(deletedMember);
+            deletedMember = memberService.deleteMember(deletedMember.getId());
             logger.info("Member deleted: {}", deletedMember.toString());
             return new ResponseEntity<>(deletedMember, HttpStatus.ACCEPTED);
         } catch (Exception e) {
