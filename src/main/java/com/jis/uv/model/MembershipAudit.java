@@ -12,7 +12,7 @@ import java.sql.Date;
 
 @Entity
 @Table(name = "membership_audit")
-public class MembershipAudit extends Membership {
+public class MembershipAudit extends MembershipSuperclass {
     @Column(name = "action")
     @Enumerated(EnumType.STRING)
     private ActionEnum action;
