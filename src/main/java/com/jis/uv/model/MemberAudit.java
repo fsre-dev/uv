@@ -284,6 +284,14 @@ public class MemberAudit {
         isDeleted = deleted;
     }
 
+    public String getActionBy() {
+        return actionBy;
+    }
+
+    public void setActionBy(String actionBy) {
+        this.actionBy = actionBy;
+    }
+
     @Override
     public String toString() {
         return "MemberAudit{" +

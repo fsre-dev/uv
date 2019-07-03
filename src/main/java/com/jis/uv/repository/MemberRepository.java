@@ -39,4 +39,5 @@ public interface MemberRepository extends JpaRepository<Member, Long>, JpaSpecif
     Member findByCardNumber(String cardNumber);
 
     Member findByIdentityCard(String identityCard);
+
 }

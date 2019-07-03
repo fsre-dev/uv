@@ -4,12 +4,10 @@ import com.jis.uv.model.enums.EventEnum;
 
 import java.sql.Date;
 import java.util.Set;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -52,14 +50,6 @@ public class Document {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public EventEnum getReason() {
-        return event;
-    }
-
-    public void setReason(EventEnum event) {
-        this.event = event;
     }
 
     public String getDescription() {

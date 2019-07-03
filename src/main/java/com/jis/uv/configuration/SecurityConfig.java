@@ -66,7 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-            .antMatchers("/user/authenticate","/document").permitAll()
+            .antMatchers("/user/authenticate").permitAll()
             .antMatchers("/user/superadmin/*", "/user/all").hasRole("SUPER_ADMIN")
             .antMatchers("/member/audit/*").hasAnyRole("SUPER_ADMIN,ADMIN")
             .anyRequest().hasAnyRole("NORMAL", "VIEWER", "ADMIN", "SUPER_ADMIN")
