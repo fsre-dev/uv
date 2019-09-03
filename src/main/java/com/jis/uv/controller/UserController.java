@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/user")
@@ -124,15 +123,12 @@ public class UserController {
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<User> loginUser(HttpServletRequest request, @RequestBody User user) {
-        User loggedUser = userService.login(user, request);
-        if (loggedUser == null) {
-            logger.info("Unable to find a User with username {} ", loggedUser.getUsername());
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        logger.info("User with {} username has loged in", loggedUser.getUsername());
+    public ResponseEntity<String> loginUser() {
+        String logedUserName = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        return new ResponseEntity<>(loggedUser, HttpStatus.OK);
+        logger.info("User with {} username has loged in", logedUserName);
+
+        return new ResponseEntity<>(logedUserName, HttpStatus.OK);
     }
 
     @PutMapping("/changePassword/{id}")

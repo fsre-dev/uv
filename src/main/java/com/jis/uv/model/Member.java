@@ -303,6 +303,12 @@ public class Member {
     }
 
     @Override
+    public int hashCode() {
+
+        return Objects.hash(firstName, lastName, cardNumber, memberType, gender, address, zip, city, state, phoneNumber, cellNumber, email, birthDate.toLocalDate(), passportNumber, identityCard, oib, isDeleted);
+    }
+
+    @Override
     public String toString() {
         return "Member{" +
             "id=" + id +
@@ -326,4 +332,5 @@ public class Member {
             ", isDeleted=" + isDeleted +
             '}';
     }
+
 }

@@ -39,6 +39,7 @@ public class MemberService {
     private final String onlyDigitsRegex = "^[0-9]*$";
     private final String phoneAndCellNumberRegex = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$";
     private final String identityCardRegex = "^[A-Za-z0-9]+$";
+    private final String firstAndLastNameRegex = "^[\\p{L}\\s.’\\-,]+$";
 
     public List<Member> findAll() {
         return memberRepository.findAll();
@@ -162,6 +163,10 @@ public class MemberService {
     }
 
     public Boolean validateMember(Member member) {
+
+        if (!member.getFirstName().matches(firstAndLastNameRegex) || !member.getLastName().matches(firstAndLastNameRegex) || member.getFirstName().trim().isEmpty() || member.getLastName().trim().isEmpty()) {
+            return false;
+        }
 
         if (!member.getEmail().matches(emailDomainRegex)) {
             return false;

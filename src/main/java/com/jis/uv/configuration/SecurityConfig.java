@@ -66,7 +66,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-            .antMatchers("/user/authenticate").permitAll()
             .antMatchers("/user/superadmin/*", "/user/all").hasRole("SUPER_ADMIN")
             .antMatchers("/member/audit/*").hasAnyRole("SUPER_ADMIN,ADMIN")
             .anyRequest().hasAnyRole("NORMAL", "VIEWER", "ADMIN", "SUPER_ADMIN")
@@ -74,7 +73,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .formLogin().and()
             .logout().permitAll().logoutSuccessHandler((new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK)))
             .and()
-            .csrf().disable();
+            .csrf().disable()
+            .httpBasic();
 
         http.sessionManagement().maximumSessions(100).sessionRegistry(sessionRegistry());
 

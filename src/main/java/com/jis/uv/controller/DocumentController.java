@@ -4,9 +4,17 @@ import com.jis.uv.model.Document;
 import com.jis.uv.model.Member;
 import com.jis.uv.service.DocumentService;
 import com.jis.uv.service.MemberService;
+import net.kaczmarzyk.spring.data.jpa.domain.Equal;
+import net.kaczmarzyk.spring.data.jpa.domain.GreaterThanOrEqual;
+import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
+import net.kaczmarzyk.spring.data.jpa.web.annotation.Join;
+import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -30,8 +39,14 @@ public class DocumentController {
     private final Logger logger = LoggerFactory.getLogger(DocumentController.class);
 
     @GetMapping
-    public ResponseEntity<List<Document>> findAll() {
-        return ResponseEntity.ok(documentService.findAll());
+    public ResponseEntity<Page<Document>> findAll(@Join(path = "members", alias = "m") @And({
+        @Spec(path = "event", spec = Equal.class),
+        @Spec(path = "m.id", params = "id", spec = Equal.class),
+        @Spec(path = "eventDate", spec = Equal.class),
+        @Spec(path = "totalCost", spec = GreaterThanOrEqual.class),
+        @Spec(path = "isDeleted", spec = Equal.class)
+    }) Specification<Document> specification, @RequestParam Integer page, @RequestParam Integer size) {
+        return ResponseEntity.ok(documentService.findAllDynamic(specification, PageRequest.of(page, size)));
     }
 
     @GetMapping(value = "/{id}")
