@@ -79,11 +79,11 @@ public class MembershipSuperclass {
         this.price = price;
     }
 
-    public Boolean getIsDeleted() {
+    public Boolean getDeleted() {
         return isDeleted;
     }
 
-    public void setIsDeleted(Boolean isDeleted) {
+    public void setDeleted(Boolean isDeleted) {
         this.isDeleted = isDeleted;
     }
 }

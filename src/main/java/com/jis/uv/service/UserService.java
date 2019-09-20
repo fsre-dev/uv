@@ -47,8 +47,8 @@ public class UserService {
         return userRepository.findById(id).orElse(null);
     }
 
-    public User findByEMail(String eMail) {
-        return userRepository.findByEMail(eMail);
+    public User findByEmail(String eMail) {
+        return userRepository.findByEmail(eMail);
     }
 
     public User findByUsername(String username) {
@@ -96,10 +96,17 @@ public class UserService {
     }
 
     public boolean validateUser(User user) {
+
+        return  user.getPassword().matches(passwordRegex)
+                && user.getUsername().matches(usernameRegex)
+                && user.getEmail().matches(emailDomainRegex);
+    }
+
+    /*public boolean validateUser(User user) {
         if (user.getPassword().matches(passwordRegex) && user.getUsername().matches(usernameRegex) && user.geteMail().matches(emailDomainRegex)) {
             return true;
         } else {
             return false;
         }
-    }
+    }*/
 }

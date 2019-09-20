@@ -25,7 +25,7 @@ public class User {
     private String password;
 
     @Column(name = "email", unique = true, nullable = false)
-    private String eMail;
+    private String email;
 
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -58,12 +58,12 @@ public class User {
         this.password = password;
     }
 
-    public String geteMail() {
-        return eMail;
+    public String getEmail() {
+        return email;
     }
 
-    public void seteMail(String eMail) {
-        this.eMail = eMail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public RoleEnum getRole() {
@@ -87,7 +87,7 @@ public class User {
         return "User{" +
             "id=" + id +
             ", username='" + username + '\'' +
-            ", eMail='" + eMail + '\'' +
+            ", email='" + email + '\'' +
             ", role=" + role +
             ", isDeleted=" + isDeleted +
             '}';

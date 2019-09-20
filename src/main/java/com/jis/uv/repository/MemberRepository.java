@@ -12,24 +12,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long>, JpaSpecificationExecutor<Member> {
 
-    Page<Member> findAllByLastName(String lastName, Pageable pageRequest);
-
-    Page<Member> findAllByFirstName(String firstName, Pageable pageRequest);
-
-    Page<Member> findAllByGender(Gender gender, Pageable pageRequest);
-
-    Page<Member> findAllByMemberType(MemberTypeEnum memberType, Pageable pageRequest);
-
-    Page<Member> findAllByAddress(String Address, Pageable pageRequest);
-
-    Page<Member> findAllByCity(String City, Pageable pageRequest);
-
-    Page<Member> findAllByState(String state, Pageable pageRequest);
-
-    Page<Member> findAllByCellNumber(String cellNumber, Pageable pageRequest);
-
-    Page<Member> findAllByPhoneNumber(String phoneNumber, Pageable pageRequest);
-
     Member findByPassportNumber(String passportNumber);
 
     Member findByOib(String oib);

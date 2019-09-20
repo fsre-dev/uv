@@ -80,8 +80,8 @@ public class UserController {
     }
 
     @GetMapping(params = {"email"})
-    public ResponseEntity<User> findByEMail(@RequestParam("email") String eMail) {
-        User user = userService.findByEMail(eMail);
+    public ResponseEntity<User> findByEmail(@RequestParam("email") String eMail) {
+        User user = userService.findByEmail(eMail);
         if (user == null) {
             logger.info("User with email {} not found", eMail);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

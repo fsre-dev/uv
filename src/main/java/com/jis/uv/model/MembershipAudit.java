@@ -28,7 +28,7 @@ public class MembershipAudit extends MembershipSuperclass {
         super(memberFrom, memberTo, price);
         this.action = action;
         updatedAt = new Date(new java.util.Date().getTime());
-        setIsDeleted(isDeleted);
+        setDeleted(isDeleted);
     }
 
     public ActionEnum getAction() {

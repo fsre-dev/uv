@@ -46,7 +46,7 @@ public class MembershipService {
         Optional<Membership> membership = this.findById(id);
         if (membership.isPresent()) {
             Membership deletedMembership = membership.get();
-            deletedMembership.setIsDeleted(true);
+            deletedMembership.setDeleted(true);
             membershipAuditService.deleteAudit(deletedMembership);
             membershipRepository.save(deletedMembership);
         } else {

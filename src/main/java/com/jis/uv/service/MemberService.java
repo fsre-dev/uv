@@ -53,41 +53,7 @@ public class MemberService {
         return memberRepository.findAll(specification, pageRequest);
     }
 
-    public Page<Member> findAllByFirstName(String firstName, Pageable pageRequest) {
-        return memberRepository.findAllByFirstName(firstName, pageRequest);
-    }
 
-    public Page<Member> findAllByLastName(String lastName, Pageable pageRequest) {
-        return memberRepository.findAllByLastName(lastName, pageRequest);
-    }
-
-    public Page<Member> findAllByPhoneNumber(String phoneNumber, Pageable pageRequest) {
-        return memberRepository.findAllByPhoneNumber(phoneNumber, pageRequest);
-    }
-
-    public Page<Member> findAllByGender(Gender gender, Pageable pageRequest) {
-        return memberRepository.findAllByGender(gender, pageRequest);
-    }
-
-    public Page<Member> findAllByMemberType(MemberTypeEnum memberType, Pageable pageRequest) {
-        return memberRepository.findAllByMemberType(memberType, pageRequest);
-    }
-
-    public Page<Member> findAllByAddress(String address, Pageable pageRequest) {
-        return memberRepository.findAllByAddress(address, pageRequest);
-    }
-
-    public Page<Member> findAllByCity(String city, Pageable pageRequest) {
-        return memberRepository.findAllByCity(city, pageRequest);
-    }
-
-    public Page<Member> findAllByState(String state, Pageable pageRequest) {
-        return memberRepository.findAllByState(state, pageRequest);
-    }
-
-    public Page<Member> findAllByCellNumber(String cellNumber, Pageable pageRequest) {
-        return memberRepository.findAllByCellNumber(cellNumber, pageRequest);
-    }
 
     public Member findById(Long id) {
         return memberRepository.findById(id).orElse(null);
@@ -116,6 +82,7 @@ public class MemberService {
     @Transactional
     public Member createMember(Member member) {
         member.setDeleted(false);
+        member.getMembership().setDeleted(false);
         Member createdMember = memberRepository.save(member);
 
         MemberAudit createdMemberAudit = new MemberAudit(createdMember);
@@ -164,36 +131,22 @@ public class MemberService {
 
     public Boolean validateMember(Member member) {
 
-        if (!member.getFirstName().matches(firstAndLastNameRegex) || !member.getLastName().matches(firstAndLastNameRegex) || member.getFirstName().trim().isEmpty() || member.getLastName().trim().isEmpty()) {
-            return false;
-        }
+        return  member.getFirstName().matches(firstAndLastNameRegex)
+                && member.getLastName().matches(firstAndLastNameRegex)
+                && !member.getFirstName().trim().isEmpty()
+                && !member.getLastName().trim().isEmpty()
+                && member.getEmail().matches(emailDomainRegex)
+                && member.getOib().matches(onlyDigitsRegex)
+                && member.getOib().length() == 11
+                && member.getCardNumber().matches(onlyDigitsRegex)
+                && member.getCardNumber().length() == 16
+                && member.getPassportNumber().matches(onlyDigitsRegex)
+                && member.getPassportNumber().length() == 9
+                && member.getIdentityCard().matches(identityCardRegex)
+                && member.getIdentityCard().length() == 9
+                && member.getPhoneNumber().matches(phoneAndCellNumberRegex)
+                && member.getCellNumber().matches(phoneAndCellNumberRegex)
+                && member.getBirthDate().before(new Date(System.currentTimeMillis()));
 
-        if (!member.getEmail().matches(emailDomainRegex)) {
-            return false;
-        }
-        if (!member.getOib().matches(onlyDigitsRegex) || member.getOib().length() != 11) {
-            return false;
-        }
-        if (!member.getCardNumber().matches(onlyDigitsRegex) || member.getCardNumber().length() != 16) {
-            return false;
-        }
-        if (!member.getPassportNumber().matches(onlyDigitsRegex) || member.getPassportNumber().length() != 9) {
-            return false;
-        }
-        if (!member.getIdentityCard().matches(identityCardRegex) || member.getIdentityCard().length() != 9) {
-            return false;
-        }
-        if (!member.getPhoneNumber().matches(phoneAndCellNumberRegex)) {
-            return false;
-        }
-        if (!member.getCellNumber().matches(phoneAndCellNumberRegex)) {
-            return false;
-        }
-        if (member.getBirthDate().after(new Date(System.currentTimeMillis()))) {
-            return false;
-        }
-
-        return true;
     }
-
 }
