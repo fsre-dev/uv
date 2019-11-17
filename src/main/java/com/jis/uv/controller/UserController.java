@@ -123,12 +123,10 @@ public class UserController {
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<String> loginUser() {
+    public void loginUser() {
         String logedUserName = SecurityContextHolder.getContext().getAuthentication().getName();
 
         logger.info("User with {} username has loged in", logedUserName);
-
-        return new ResponseEntity<>(logedUserName, HttpStatus.OK);
     }
 
     @PutMapping("/changePassword/{id}")
