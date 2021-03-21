@@ -1,8 +1,6 @@
 package com.jis.uv.controller;
 
 import com.jis.uv.model.Member;
-import com.jis.uv.model.enums.Gender;
-import com.jis.uv.model.enums.MemberTypeEnum;
 import com.jis.uv.service.MemberService;
 import net.kaczmarzyk.spring.data.jpa.domain.Equal;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
@@ -165,6 +163,7 @@ public class MemberController {
         }
         member.setMembership(updatedMember.getMembership());
         member.setDocuments(updatedMember.getDocuments());
+        member.setDeleted(false);
 
         updatedMember = memberService.updateMember(member, id);
 

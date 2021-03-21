@@ -5,6 +5,7 @@ import com.jis.uv.service.TicketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -76,8 +77,8 @@ public class TicketController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Ticket>> findAll(@RequestParam Integer page, @RequestParam Integer size) {
-        List<Ticket> tickets = ticketService.findAll(PageRequest.of(page, size));
+    public ResponseEntity<Page<Ticket>> findAll(@RequestParam Integer page, @RequestParam Integer size) {
+        Page<Ticket> tickets = ticketService.findAll(PageRequest.of(page, size));
         if (!tickets.isEmpty()) {
             logger.info("Successfully found all tickets");
             return ResponseEntity.ok(tickets);

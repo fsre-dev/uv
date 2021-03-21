@@ -38,18 +38,19 @@ public class TicketService {
     }
 
     public void delete(Long id) throws Exception {
-        Optional<Ticket> ticket = this.findById(id);
+        Optional<Ticket> ticket = findById(id);
         if (ticket.isPresent()) {
             Ticket deletedTicket = ticket.get();
             deletedTicket.setIsDeleted(true);
             ticketRepository.save(deletedTicket);
+        } else {
+            throw new Exception("Ticket does not exist");
         }
-        throw new Exception("Ticket does not exist");
     }
 
-    public List<Ticket> findAll(Pageable pageRequest) {
+    public Page<Ticket> findAll(Pageable pageRequest) {
         Page<Ticket> pageableTickets = ticketRepository.findAllByIsDeletedFalse(pageRequest);
-        return pageableTickets.getContent();
+        return pageableTickets;
     }
 
     public Optional<Ticket> findById(Long id) {

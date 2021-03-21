@@ -46,9 +46,6 @@ public class Member {
     @Column(name = "address", nullable = false)
     private String address;
 
-    @Column(name = "zip", nullable = false)
-    private String zip;
-
     @Column(name = "city", nullable = false)
     private String city;
 
@@ -91,7 +88,7 @@ public class Member {
     }
 
     public Member(String firstName, String lastName, String cardNumber, MemberTypeEnum memberType, Gender gender,
-                  String address, String zip, String city, String state, String phoneNumber, String cellNumber, String email,
+                  String address, String city, String state, String phoneNumber, String cellNumber, String email,
                   Date birthDate, String passportNumber, String oib, String identityCard, Boolean isDeleted, Membership membership) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -99,7 +96,6 @@ public class Member {
         this.memberType = memberType;
         this.gender = gender;
         this.address = address;
-        this.zip = zip;
         this.city = city;
         this.state = state;
         this.phoneNumber = phoneNumber;
@@ -161,20 +157,13 @@ public class Member {
         this.gender = gender;
     }
 
+
     public String getAddress() {
         return address;
     }
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public String getZip() {
-        return zip;
-    }
-
-    public void setZip(String zip) {
-        this.zip = zip;
     }
 
     public String getCity() {
@@ -289,7 +278,6 @@ public class Member {
                 memberType == member.memberType &&
                 gender == member.gender &&
                 Objects.equals(address, member.address) &&
-                Objects.equals(zip, member.zip) &&
                 Objects.equals(city, member.city) &&
                 Objects.equals(state, member.state) &&
                 Objects.equals(phoneNumber, member.phoneNumber) &&
@@ -312,7 +300,6 @@ public class Member {
             ", memberType=" + memberType +
             ", gender=" + gender +
             ", address='" + address + '\'' +
-            ", zip='" + zip + '\'' +
             ", city='" + city + '\'' +
             ", state='" + state + '\'' +
             ", phoneNumber='" + phoneNumber + '\'' +

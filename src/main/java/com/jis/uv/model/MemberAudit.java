@@ -51,9 +51,6 @@ public class MemberAudit {
     @Column(name = "address")
     private String address;
 
-    @Column(name = "zip")
-    private String zip;
-
     @Column(name = "city")
     private String city;
 
@@ -102,7 +99,6 @@ public class MemberAudit {
         this.memberType = member.getMemberType();
         this.address = member.getAddress();
         this.email = member.getEmail();
-        this.zip = member.getZip();
         this.city = member.getCity();
         this.state = member.getState();
         this.birthDate = member.getBirthDate();
@@ -186,14 +182,6 @@ public class MemberAudit {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public String getZip() {
-        return zip;
-    }
-
-    public void setZip(String zip) {
-        this.zip = zip;
     }
 
     public String getCity() {
@@ -304,7 +292,6 @@ public class MemberAudit {
             ", memberType=" + memberType +
             ", gender=" + gender +
             ", address='" + address + '\'' +
-            ", zip='" + zip + '\'' +
             ", city='" + city + '\'' +
             ", state='" + state + '\'' +
             ", phoneNumber='" + phoneNumber + '\'' +
