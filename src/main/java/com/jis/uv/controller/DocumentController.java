@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import javax.servlet.http.HttpServletResponse;
 
 @Controller
 @RequestMapping("/document")
@@ -50,6 +51,30 @@ public class DocumentController {
     }
 
     @GetMapping(value = "/{id}")
+    public ResponseEntity<Document> findById(@PathVariable Long id) {
+        Document document = documentService.findById(id);
+        if (document == null) {
+            logger.error("Document with id {} not found", id);
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(documentService.findById(document.getId()));
+    }
+
+    @GetMapping(value = "/export/{id}")
+    public void exportExcelById(@PathVariable Long id, HttpServletResponse response) throws Exception {
+        response.setContentType("application/octet-stream");
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=document.xlsx";
+        response.setHeader(headerKey, headerValue);
+
+        Document document = documentService.findById(id);
+        if (document == null) {
+            logger.error("Document with id {} not found", id);
+        }
+        documentService.exportDocument(document, response);
+    }
+
+    @GetMapping(value = "/member/{id}")
     public ResponseEntity<List<Document>> findAllByMember(@PathVariable Long id) {
         Member member = memberService.findById(id);
         if (member == null) {
