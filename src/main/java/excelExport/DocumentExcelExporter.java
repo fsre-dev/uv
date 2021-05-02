@@ -104,7 +104,7 @@ public class DocumentExcelExporter {
     }
 
     private void writeMemberDataLines() {
-        int rowCount = 1;
+        int rowCount = 11;
 
         CellStyle style = workbook.createCellStyle();
         XSSFFont font = workbook.createFont();
