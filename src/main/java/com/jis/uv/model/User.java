@@ -1,6 +1,6 @@
 package com.jis.uv.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jis.uv.model.enums.RoleEnum;
 
 import javax.persistence.Column;
@@ -22,7 +22,7 @@ public class User {
     @Column(name = "username", unique = true, nullable = false)
     private String username;
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "password", nullable = false)
     private String password;
 

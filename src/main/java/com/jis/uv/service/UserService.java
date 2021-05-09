@@ -36,7 +36,7 @@ public class UserService {
     }
 
     public Page<User> findAll(Pageable pageRequest) {
-        return userRepository.findAll(pageRequest);
+        return userRepository.findAllByIsDeletedFalse(pageRequest);
     }
 
     public Page<User> findAllByRole(RoleEnum role, Pageable pageRequest) {
@@ -44,7 +44,8 @@ public class UserService {
     }
 
     public User findById(Long id) {
-        return userRepository.findById(id).orElse(null);
+        User user = userRepository.findById(id).orElse(null);
+        return user;
     }
 
     public User findByEmail(String eMail) {
@@ -66,6 +67,7 @@ public class UserService {
 
     public User updateUser(User user, Long id) {
         user.setId(id);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
@@ -96,10 +98,8 @@ public class UserService {
     }
 
     public boolean validateUser(User user) {
-
-        return  user.getPassword().matches(passwordRegex)
-                && user.getUsername().matches(usernameRegex)
-                && user.getEmail().matches(emailDomainRegex);
+        //user.getPassword().matches(passwordRegex)
+        return user.getUsername().matches(usernameRegex) && user.getEmail().matches(emailDomainRegex);
     }
 
     /*public boolean validateUser(User user) {

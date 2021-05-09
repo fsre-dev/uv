@@ -18,4 +18,6 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     Page<User> findAllByRole(RoleEnum role, Pageable pageRequest);
 
+    Page<User> findAllByIsDeletedFalse(Pageable pageRequest);
+
 }
