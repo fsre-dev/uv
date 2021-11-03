@@ -2,6 +2,7 @@ package com.jis.uv.controller;
 
 import com.jis.uv.model.User;
 import com.jis.uv.model.enums.RoleEnum;
+import com.jis.uv.service.MailSenderService;
 import com.jis.uv.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private MailSenderService mailSenderService;
 
     @GetMapping("/all")
     public ResponseEntity<List<User>> findAll() {
@@ -129,6 +133,14 @@ public class UserController {
         logger.info("User with {} username has loged in", logedUserName);
 
         return ResponseEntity.ok(logedUser);
+    }
+
+    @GetMapping("/superadmin/sendmail/expiration")
+    public Object sendExpirationMail() {
+        mailSenderService.forceSendExpirationMail();
+        logger.info("Expiration mail send to all users");
+
+        return ResponseEntity.ok("Expiration mail send to all users");
     }
 
     @PutMapping("/changePassword/{id}")

@@ -48,6 +48,25 @@ public class MailSenderService {
         }
     }
 
+    public void forceSendExpirationMail() {
+        int daysBeforeExpiration;
+        String messageText;
+        List<Member> members = memberService.findAll();
+        for (Member member : members) {
+            Membership membership = member.getMembership();
+            daysBeforeExpiration = calculateDaysBeforeExpiration(membership.getMemberTo());
+            if (daysBeforeExpiration == 14 ) {
+                messageText = "Your membership is expiring in 14 days";
+                sendMessage(member, messageText);
+                logger.info("E-mail sent successfully");
+            } else if (daysBeforeExpiration == -1) {
+                messageText = "Your membership has expired";
+                sendMessage(member, messageText);
+                logger.info("E-mail sent successfully");
+            }
+        }
+    }
+
     private void sendMessage(Member member, String messageText) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(member.getEmail());
