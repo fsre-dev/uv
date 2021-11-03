@@ -59,7 +59,7 @@ public class MailSenderService {
                 messageText = "Your membership is expiring in 14 days";
                 sendMessage(member, messageText);
                 logger.info("E-mail sent successfully");
-            } else if (daysBeforeExpiration == -1) {
+            } else if (daysBeforeExpiration < 0) {
                 messageText = "Your membership has expired";
                 sendMessage(member, messageText);
                 logger.info("E-mail sent successfully");
